@@ -77,3 +77,8 @@ export interface DashboardState {
     queries: DataQuery[];
   };
 }
+
+export interface ImportDashboardState {
+  dashboard: any;
+  gcomError: string;
+}
