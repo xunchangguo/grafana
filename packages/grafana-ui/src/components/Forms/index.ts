@@ -6,6 +6,7 @@ import { Form } from './Form';
 import { Field } from './Field';
 import { Button, LinkButton } from './Button';
 import { TextArea } from './TextArea/TextArea';
+import { Legend } from './Legend';
 
 const Forms = {
   getFormStyles,
@@ -17,6 +18,7 @@ const Forms = {
   LinkButton,
   Select,
   TextArea,
+  Legend,
 };
 
 export default Forms;
