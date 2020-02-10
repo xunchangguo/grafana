@@ -742,21 +742,6 @@ jobs:
       - run:
           name: build and package grafana
           command: './scripts/build/build-all.sh'
-      - run:
-          name: Prepare GPG private key
-          command: './scripts/build/prepare_signing_key.sh'
-      - run:
-          name: sign packages
-          command: './scripts/build/sign_packages.sh dist/*.rpm'
-      - run:
-          name: verify signed packages
-          command: './scripts/build/verify_signed_packages.sh dist/*.rpm'
-      - run:
-          name: sha-sum packages
-          command: 'go run build.go sha-dist'
-      - run:
-          name: Test and build Grafana.com release publisher
-          command: 'cd scripts/build/release_publisher && go test . && go build -o release_publisher .'
       - persist_to_workspace:
           root: .
           paths:
@@ -788,18 +773,6 @@ jobs:
       - run:
           name: build and package grafana
           command: './scripts/build/build.sh'
-      - run:
-          name: Prepare GPG private key
-          command: './scripts/build/prepare_signing_key.sh'
-      - run:
-          name: sign packages
-          command: './scripts/build/sign_packages.sh dist/*.rpm'
-      - run:
-          name: sha-sum packages
-          command: 'go run build.go sha-dist'
-      - run:
-          name: Test Grafana.com release publisher
-          command: 'cd scripts/build/release_publisher && go test .'
       - persist_to_workspace:
           root: .
           paths:
@@ -952,18 +925,6 @@ jobs:
       - run:
           name: package grafana
           command: './scripts/build/build.sh --fast --package-only'
-      - run:
-          name: Prepare GPG private key
-          command: './scripts/build/prepare_signing_key.sh'
-      - run:
-          name: sign packages
-          command: './scripts/build/sign_packages.sh dist/*.rpm'
-      - run:
-          name: sha-sum packages
-          command: 'go run build.go sha-dist'
-      - run:
-          name: Test Grafana.com release publisher
-          command: 'cd scripts/build/release_publisher && go test .'
       - persist_to_workspace:
           root: .
           paths:
@@ -1142,15 +1103,7 @@ jobs:
       - run:
           name: sign in to gcp
           command: '/opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=/tmp/gcpkey.json'
-      - run:
-          name: deploy to gcp
-          command: '/opt/google-cloud-sdk/bin/gsutil cp ./dist/* gs://$GCP_BUCKET_NAME/oss/master'
-      - run:
-          name: Publish to Grafana.com
-          command: |
-            rm dist/*latest* || true
-            cd dist && ../scripts/build/release_publisher/release_publisher -apikey ${GRAFANA_COM_API_KEY} -version "v$(cat grafana.version)" --nightly
-
+          
   deploy-release:
     docker:
       - image: grafana/grafana-ci-deploy:1.2.3
