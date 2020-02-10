@@ -213,16 +213,16 @@ export function grafanaAppDirective(
         switch (search.kiosk) {
           case 'tv': {
             search.kiosk = true;
-            appEvents.emit(AppEvents.alertSuccess, ['Press ESC to exit Kiosk mode']);
+            //appEvents.emit(AppEvents.alertSuccess, ['Press ESC to exit Kiosk mode']);
             break;
           }
           case '1':
           case true: {
-            delete search.kiosk;
+            search.kiosk = true;
             break;
           }
           default: {
-            search.kiosk = 'tv';
+            search.kiosk = true;
           }
         }
 
