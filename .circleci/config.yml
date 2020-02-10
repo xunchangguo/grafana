@@ -1393,17 +1393,6 @@ workflows:
             - mysql-integration-test
             - postgres-integration-test
           filters: *filter-only-master
-      - deploy-enterprise-master:
-          requires:
-            - build-all
-            - test-backend
-            - test-frontend
-            - codespell
-            - lint-go
-            - shellcheck
-            - mysql-integration-test
-            - postgres-integration-test
-          filters: *filter-only-master
       - build-oss-msi:
           requires:
             - build-all
@@ -1626,7 +1615,6 @@ workflows:
       - grafana-docker-release:
           requires:
             - build-all
-            - build-all-enterprise
             - test-backend
             - test-frontend
             - codespell
@@ -1638,7 +1626,6 @@ workflows:
       - grafana-docker-ubuntu-release:
           requires:
             - build-all
-            - build-all-enterprise
             - test-backend
             - test-frontend
             - codespell
