@@ -1723,8 +1723,6 @@ workflows:
               - postgres-integration-test
               - cache-server-test
             filters: *filter-not-release-or-master
-        - build-docs-website:
-            filters: *filter-not-release-or-master
   nightly:
     triggers:
       - schedule:
