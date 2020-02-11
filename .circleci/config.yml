@@ -975,7 +975,6 @@ jobs:
       - run: docker info
       - run: docker run --privileged linuxkit/binfmt:v0.6
       - run: cp dist/grafana-latest.linux-*.tar.gz packaging/docker
-      - run: cp enterprise-dist/grafana-enterprise-*.linux-amd64-musl.tar.gz packaging/docker/grafana-latest.linux-x64-musl.tar.gz
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
@@ -998,7 +997,6 @@ jobs:
       - run: docker info
       - run: docker run --privileged linuxkit/binfmt:v0.6
       - run: cp dist/grafana-latest.linux-*.tar.gz packaging/docker
-      - run: cp enterprise-dist/grafana-enterprise-*.linux-amd64.tar.gz packaging/docker/grafana-latest.linux-x64.tar.gz
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
