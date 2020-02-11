@@ -1100,9 +1100,6 @@ jobs:
       - run:
           name: gcp credentials
           command: 'echo ${GCP_GRAFANA_UPLOAD_KEY} > /tmp/gcpkey.json'
-      - run:
-          name: sign in to gcp
-          command: '/opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=/tmp/gcpkey.json'
           
   deploy-release:
     docker:
@@ -1117,33 +1114,6 @@ jobs:
       - run:
           name: gcp credentials
           command: 'echo ${GCP_GRAFANA_UPLOAD_KEY} > /tmp/gcpkey.json'
-      - run:
-          name: sign in to gcp
-          command: '/opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=/tmp/gcpkey.json'
-      - run:
-          name: deploy to gcp
-          command: '/opt/google-cloud-sdk/bin/gsutil cp ./dist/* gs://$GCP_BUCKET_NAME/oss/release'
-      - run:
-          name: Deploy to Grafana.com
-          command: './scripts/build/publish.sh'
-      - run:
-          name: Prepare GPG private key
-          command: './scripts/build/prepare_signing_key.sh'
-      - run:
-          name: Load GPG private key
-          command: './scripts/build/update_repo/load-signing-key.sh'
-      - run:
-          name: Update Debian repository
-          command: './scripts/build/update_repo/update-deb.sh "oss" "$GPG_KEY_PASSWORD" "$CIRCLE_TAG" "dist"'
-      - run:
-          name: Publish Debian repository
-          command: './scripts/build/update_repo/publish-deb.sh "oss"'
-      - run:
-          name: Update RPM repository
-          command: './scripts/build/update_repo/update-rpm.sh "oss" "$GPG_KEY_PASSWORD" "$CIRCLE_TAG" "dist"'
-      - run:
-          name: Publish RPM repository
-          command: './scripts/build/update_repo/publish-rpm.sh "oss" "$CIRCLE_TAG"'
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
