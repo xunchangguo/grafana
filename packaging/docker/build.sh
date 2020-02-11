@@ -26,7 +26,7 @@ while [ "$1" != "" ]; do
 done
 
 _grafana_tag=${1:-}
-_docker_repo=${2:-grafana/grafana}
+_docker_repo=${2:-xunchangguo/grafana}
 
 # If the tag starts with v, treat this as a official release
 if echo "$_grafana_tag" | grep -q "^v"; then
@@ -104,8 +104,8 @@ fi
 if echo "$_grafana_tag" | grep -q "^v"; then
   docker_tag_all "latest"
   # Create the expected tag for running the end to end tests successfully
-  docker tag "${_docker_repo}:${_grafana_version}${TAG_SUFFIX}" "grafana/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
+  docker tag "${_docker_repo}:${_grafana_version}${TAG_SUFFIX}" "xunchangguo/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
 else
   docker_tag_all "master"
-  docker tag "${_docker_repo}:${_grafana_version}${TAG_SUFFIX}" "grafana/grafana-dev:${_grafana_version}${TAG_SUFFIX}"
+  docker tag "${_docker_repo}:${_grafana_version}${TAG_SUFFIX}" "xunchangguo/grafana-dev:${_grafana_version}${TAG_SUFFIX}"
 fi

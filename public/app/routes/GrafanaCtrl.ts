@@ -29,7 +29,7 @@ import { BridgeSrv } from 'app/core/services/bridge_srv';
 import { PlaylistSrv } from 'app/features/playlist/playlist_srv';
 import { DashboardSrv, setDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { ILocationService, ITimeoutService, IRootScopeService, IAngularEvent } from 'angular';
-import { AppEvent, AppEvents } from '@grafana/data';
+import { AppEvent } from '@grafana/data';
 
 export type GrafanaRootScope = IRootScopeService & AppEventEmitter & AppEventConsumer & { colors: string[] };
 
@@ -213,16 +213,16 @@ export function grafanaAppDirective(
         switch (search.kiosk) {
           case 'tv': {
             search.kiosk = true;
-            appEvents.emit(AppEvents.alertSuccess, ['Press ESC to exit Kiosk mode']);
+            //appEvents.emit(AppEvents.alertSuccess, ['Press ESC to exit Kiosk mode']);
             break;
           }
           case '1':
           case true: {
-            delete search.kiosk;
+            search.kiosk = true;
             break;
           }
           default: {
-            search.kiosk = 'tv';
+            search.kiosk = true;
           }
         }
 
