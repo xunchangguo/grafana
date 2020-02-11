@@ -2,7 +2,7 @@
 set -eo pipefail
 
 _version="1.2.13"
-_tag="grafana/build-container:${_version}"
+_tag="xunchangguo/build-container:${_version}"
 
 _dpath=$(dirname "${BASH_SOURCE[0]}")
 cd "$_dpath"
