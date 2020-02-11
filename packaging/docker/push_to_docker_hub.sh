@@ -20,7 +20,7 @@ while [ "$1" != "" ]; do
 done
 
 _grafana_tag=${1:-}
-_docker_repo=${2:-grafana/grafana}
+_docker_repo=${2:-xunchangguo/grafana}
 
 # If the tag starts with v, treat this as an official release
 if echo "$_grafana_tag" | grep -q "^v"; then
@@ -57,13 +57,13 @@ if echo "$_grafana_tag" | grep -q "^v" && echo "$_grafana_tag" | grep -vq "beta"
 	docker_push_all "${_docker_repo}" "${_grafana_version}"
 	# Push to the grafana-dev repository with the expected tag
 	# for running the end to end tests successfully
-  docker push "grafana/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
+  docker push "xunchangguo/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
 elif echo "$_grafana_tag" | grep -q "^v" && echo "$_grafana_tag" | grep -q "beta"; then
 	docker_push_all "${_docker_repo}" "${_grafana_version}"
 	# Push to the grafana-dev repository with the expected tag
 	# for running the end to end tests successfully
-  docker push "grafana/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
+  docker push "xunchangguo/grafana-dev:${_grafana_tag}${TAG_SUFFIX}"
 elif echo "$_grafana_tag" | grep -q "master"; then
 	docker_push_all "${_docker_repo}" "master"
-  docker push "grafana/grafana-dev:${_grafana_version}${TAG_SUFFIX}"
+  docker push "xunchangguo/grafana-dev:${_grafana_version}${TAG_SUFFIX}"
 fi
