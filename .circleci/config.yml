@@ -165,6 +165,9 @@ jobs:
           paths:
             - oss/dist/grafana-*.msi
             - oss/dist/grafana-*.msi.sha256
+      - store_artifacts:
+          path: oss/dist/
+          destination: oss/
       - run:
           name: CI job failed
           command: ./scripts/ci-job-failed.sh
@@ -226,6 +229,9 @@ jobs:
           root: .
           paths:
             - oss/dist/*
+      - store_artifacts:
+          path: oss/dist/
+          destination: oss/
       - run:
           name: CI job failed
           command: ./scripts/ci-job-failed.sh
@@ -290,6 +296,9 @@ jobs:
           root: .
           paths:
             - docker/grafana-oss*.tar
+      - store_artifacts:
+          path: docker/
+          destination: docker/
       - run:
           name: CI job failed
           command: ./scripts/ci-job-failed.sh
@@ -328,6 +337,9 @@ jobs:
           root: .
           paths:
             - docker/grafana-oss*.tar
+      - store_artifacts:
+          path: docker/
+          destination: docker/
       - run:
           name: CI job failed
           command: ./scripts/ci-job-failed.sh
@@ -749,6 +761,9 @@ jobs:
             - scripts/*.sh
             - scripts/build/release_publisher/release_publisher
             - scripts/build/publish.sh
+      - store_artifacts:
+          path: dist/
+          destination: dist/
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
@@ -846,6 +861,12 @@ jobs:
           paths:
             - public/build/*
             - tools/phantomjs/*
+      - store_artifacts:
+          path: public/build/
+          destination: public/build/
+      - store_artifacts:
+          path: tools/phantomjs/
+          destination: tools/phantomjs/
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
@@ -929,6 +950,9 @@ jobs:
           root: .
           paths:
             - dist/*
+      - store_artifacts:
+          path: dist/
+          destination: dist/
       - run:
             name: ci job failed
             command: './scripts/ci-job-failed.sh'
@@ -1141,6 +1165,9 @@ jobs:
           paths:
             - dist/grafana-*.msi
             - dist/grafana-*.msi.sha256
+      - store_artifacts:
+          path: dist/
+          destination: dist/
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
@@ -1159,6 +1186,9 @@ jobs:
           at: .
       - store_artifacts:
           path: ./dist
+      - store_artifacts:
+          path: dist/
+          destination: dist/
 
   build-grafana-packages:
     docker:
