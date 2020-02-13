@@ -3,7 +3,7 @@ import { store } from 'app/store/store';
 import config from 'app/core/config';
 import { getDataSourceSrv, getLocationSrv } from '@grafana/runtime';
 import { PanelMenuItem } from '@grafana/data';
-import { copyPanel, duplicatePanel, editPanelJson, removePanel, sharePanel } from 'app/features/dashboard/utils/panel';
+import { copyPanel, duplicatePanel, editPanelJson, removePanel } from 'app/features/dashboard/utils/panel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { contextSrv } from '../../../core/services/context_srv';
