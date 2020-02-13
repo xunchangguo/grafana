@@ -53,11 +53,6 @@ export function getPanelMenu(dashboard: DashboardModel, panel: PanelModel): Pane
     );
   };
 
-  const onSharePanel = (event: React.MouseEvent<any>) => {
-    event.preventDefault();
-    sharePanel(dashboard, panel);
-  };
-
   const onInspectPanel = (event: React.MouseEvent<any>) => {
     event.preventDefault();
     getLocationSrv().update({
