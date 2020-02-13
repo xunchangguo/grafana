@@ -116,13 +116,6 @@ export function getPanelMenu(dashboard: DashboardModel, panel: PanelModel): Pane
     });
   }
 
-  menu.push({
-    text: 'Share',
-    iconClassName: 'fa fa-fw fa-share',
-    onClick: onSharePanel,
-    shortcut: 'p s',
-  });
-
   if (contextSrv.hasAccessToExplore() && !panel.plugin.meta.skipDataQuery) {
     menu.push({
       text: 'Explore',
