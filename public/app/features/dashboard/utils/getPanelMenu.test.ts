@@ -22,12 +22,6 @@ describe('getPanelMenu', () => {
           "text": "Edit",
         },
         Object {
-          "iconClassName": "fa fa-fw fa-share",
-          "onClick": [Function],
-          "shortcut": "p s",
-          "text": "Share",
-        },
-        Object {
           "iconClassName": "fa fa-fw fa-cube",
           "onClick": [Function],
           "subMenu": Array [
