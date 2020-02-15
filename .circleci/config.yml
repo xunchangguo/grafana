@@ -1137,9 +1137,6 @@ jobs:
           name: npm - Prepare auth token
           command: 'echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc'
       - run:
-          name: Release next packages
-          command: './scripts/circle-release-next-packages.sh'
-      - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
           when: on_fail
