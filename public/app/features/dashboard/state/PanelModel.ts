@@ -13,6 +13,7 @@ import {
   DataTransformerConfig,
   ScopedVars,
 } from '@grafana/data';
+import { AngularComponent } from '@grafana/runtime';
 import { EDIT_PANEL_ID } from 'app/core/constants';
 
 import config from 'app/core/config';
@@ -23,6 +24,7 @@ import { take } from 'rxjs/operators';
 
 export const panelAdded = eventFactory<PanelModel | undefined>('panel-added');
 export const panelRemoved = eventFactory<PanelModel | undefined>('panel-removed');
+export const angularPanelUpdated = eventFactory('panel-angular-panel-updated');
 
 export interface GridPos {
   x: number;
@@ -41,6 +43,8 @@ const notPersistedProperties: { [str: string]: boolean } = {
   cachedPluginOptions: true,
   plugin: true,
   queryRunner: true,
+  angularPanel: true,
+  restoreModel: true,
 };
 
 // For angular panels we need to clean up properties when changing type
@@ -135,6 +139,7 @@ export class PanelModel {
   cachedPluginOptions?: any;
   legend?: { show: boolean };
   plugin?: PanelPlugin;
+  angularPanel?: AngularComponent;
 
   private queryRunner?: PanelQueryRunner;
 
@@ -147,7 +152,7 @@ export class PanelModel {
   }
 
   /** Given a persistened PanelModel restores property values */
-  restoreModel(model: any) {
+  restoreModel = (model: any) => {
     // copy properties from persisted model
     for (const property in model) {
       (this as any)[property] = model[property];
@@ -158,7 +163,7 @@ export class PanelModel {
 
     // queries must have refId
     this.ensureQueryIds();
-  }
+  };
 
   ensureQueryIds() {
     if (this.targets && _.isArray(this.targets)) {
@@ -291,6 +296,10 @@ export class PanelModel {
     const oldPluginId = this.type;
     const wasAngular = !!this.plugin.angularPanelCtrl;
 
+    if (this.angularPanel) {
+      this.setAngularPanel(undefined);
+    }
+
     // remove panel type specific  options
     for (const key of _.keys(this)) {
       if (mustKeepProps[key]) {
@@ -386,11 +395,25 @@ export class PanelModel {
       this.queryRunner.destroy();
       this.queryRunner = null;
     }
+
+    if (this.angularPanel) {
+      this.angularPanel.destroy();
+    }
   }
 
   setTransformations(transformations: DataTransformerConfig[]) {
     this.transformations = transformations;
     this.getQueryRunner().setTransformations(transformations);
+  }
+
+  setAngularPanel(component: AngularComponent) {
+    if (this.angularPanel) {
+      // this will remove all event listeners
+      this.angularPanel.destroy();
+    }
+
+    this.angularPanel = component;
+    this.events.emit(angularPanelUpdated);
   }
 }
 
