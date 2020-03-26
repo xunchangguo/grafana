@@ -22,7 +22,7 @@ executors:
       - image: grafana/build-container:1.2.13
   grafana-publish:
     docker:
-      - image: grafana/grafana-ci-deploy:1.2.3
+      - image: grafana/grafana-ci-deploy:1.2.4
   docker:
     machine:
       image: circleci/classic:201808-01
@@ -37,18 +37,14 @@ jobs:
   install-grabpl:
     description: Install the Grafana Build Pipeline tool
     executor: grafana-build
-    steps:
-      - run:
-          name: Clone repo
-          command: |
-            mkdir -p ~/.ssh
-            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' >> ~/.ssh/known_hosts
-            git clone git@github.com:grafana/build-pipeline.git
+    steps:      
       - run:
           name: Install Grafana Build Pipeline
           command: |
-            cd build-pipeline
-            go build -o ../bin/grabpl ./cmd/grabpl
+            curl -fLO https://grafana-downloads.storage.googleapis.com/grafana-build-pipeline/v0.2.4/grabpl
+            go build -o ../bin/grabpl ./cmd/grabpl	            chmod +x grabpl
+            mkdir bin
+            mv grabpl bin/
       - persist_to_workspace:
           root: .
           paths:
@@ -1022,7 +1018,7 @@ jobs:
 
   deploy-master:
     docker:
-      - image: grafana/grafana-ci-deploy:1.2.3
+      - image: grafana/grafana-ci-deploy:1.2.4
     steps:
       - attach_workspace:
           at: .
@@ -1035,7 +1031,7 @@ jobs:
           
   deploy-release:
     docker:
-      - image: grafana/grafana-ci-deploy:1.2.3
+      - image: grafana/grafana-ci-deploy:1.2.4
     steps:
       - checkout
       - run:
