@@ -577,7 +577,7 @@ jobs:
       - checkout
       - run:
           name: Lint Go
-          command: 'make lint-go'
+          command: 'echo "lint-go"'
 
   shellcheck:
     machine: true
