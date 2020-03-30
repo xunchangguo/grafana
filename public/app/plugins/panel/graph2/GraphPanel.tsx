@@ -14,7 +14,6 @@ export const GraphPanel: React.FunctionComponent<GraphPanelProps> = ({
   width,
   height,
   options,
-  fieldConfig,
   onOptionsChange,
   onChangeTimeRange,
 }) => {
@@ -44,7 +43,6 @@ export const GraphPanel: React.FunctionComponent<GraphPanelProps> = ({
       data={data}
       timeZone={timeZone}
       options={options}
-      fieldConfig={fieldConfig}
       onOptionsChange={onOptionsChange}
       onChangeTimeRange={onChangeTimeRange}
     >

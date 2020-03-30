@@ -10,7 +10,6 @@ import {
   LinkModel,
   formattedValueToString,
   DisplayValue,
-  DataLink,
 } from '@grafana/data';
 import { getLinkSrv } from './link_srv';
 import { getFieldDisplayValuesProxy } from './fieldDisplayValuesProxy';
@@ -144,10 +143,7 @@ export const getPanelLinksSupplier = (value: PanelModel): LinkModelSupplier<Pane
   };
 };
 
-export const getLinksFromLogsField = (
-  field: Field,
-  rowIndex: number
-): Array<{ linkModel: LinkModel<Field>; link: DataLink }> => {
+export const getLinksFromLogsField = (field: Field, rowIndex: number): Array<LinkModel<Field>> => {
   const scopedVars: any = {};
   scopedVars['__value'] = {
     value: {
@@ -157,11 +153,6 @@ export const getLinksFromLogsField = (
   };
 
   return field.config.links
-    ? field.config.links.map(link => {
-        return {
-          link,
-          linkModel: getLinkSrv().getDataLinkUIModel(link, scopedVars, field),
-        };
-      })
+    ? field.config.links.map(link => getLinkSrv().getDataLinkUIModel(link, scopedVars, field))
     : [];
 };

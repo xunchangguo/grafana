@@ -69,11 +69,10 @@ export class StatPanel extends PureComponent<PanelProps<StatPanelOptions>> {
   };
 
   getValues = (): FieldDisplay[] => {
-    const { data, options, replaceVariables, fieldConfig } = this.props;
+    const { data, options, replaceVariables } = this.props;
 
     return getFieldDisplayValues({
-      fieldConfig,
-      fieldOptions: options.fieldOptions,
+      ...options,
       replaceVariables,
       theme: config.theme,
       data: data.series,

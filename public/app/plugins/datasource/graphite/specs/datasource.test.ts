@@ -10,94 +10,19 @@ jest.mock('@grafana/runtime', () => ({
   getBackendSrv: () => backendSrv,
 }));
 
-interface Context {
-  templateSrv: TemplateSrv;
-  ds: GraphiteDatasource;
-}
-
 describe('graphiteDatasource', () => {
   const datasourceRequestMock = jest.spyOn(backendSrv, 'datasourceRequest');
 
-  let ctx = {} as Context;
+  const ctx: any = {
+    // @ts-ignore
+    templateSrv: new TemplateSrv(),
+    instanceSettings: { url: 'url', name: 'graphiteProd', jsonData: {} },
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    const instanceSettings = {
-      url: '/api/datasources/proxy/1',
-      name: 'graphiteProd',
-      jsonData: {
-        rollupIndicatorEnabled: true,
-      },
-    };
-    const templateSrv = new TemplateSrv();
-    const ds = new GraphiteDatasource(instanceSettings, templateSrv);
-    ctx = { templateSrv, ds };
-  });
-
-  describe('convertResponseToDataFrames', () => {
-    it('should transform regular result', () => {
-      const result = ctx.ds.convertResponseToDataFrames({
-        data: {
-          meta: {
-            stats: {
-              'executeplan.cache-hit-partial.count': 5,
-              'executeplan.cache-hit.count': 10,
-            },
-          },
-          series: [
-            {
-              target: 'seriesA',
-              datapoints: [
-                [100, 200],
-                [101, 201],
-              ],
-              meta: [
-                {
-                  'aggnum-norm': 1,
-                  'aggnum-rc': 7,
-                  'archive-interval': 3600,
-                  'archive-read': 1,
-                  'consolidate-normfetch': 'AverageConsolidator',
-                  'consolidate-rc': 'AverageConsolidator',
-                  count: 1,
-                  'schema-name': 'wpUsageMetrics',
-                  'schema-retentions': '1h:35d:6h:2,2h:2y:6h:2',
-                },
-              ],
-            },
-            {
-              target: 'seriesB',
-              meta: [
-                {
-                  'aggnum-norm': 1,
-                  'aggnum-rc': 0,
-                  'archive-interval': 3600,
-                  'archive-read': 0,
-                  'consolidate-normfetch': 'AverageConsolidator',
-                  'consolidate-rc': 'NoneConsolidator',
-                  count: 1,
-                  'schema-name': 'wpUsageMetrics',
-                  'schema-retentions': '1h:35d:6h:2,2h:2y:6h:2',
-                },
-              ],
-              datapoints: [
-                [200, 300],
-                [201, 301],
-              ],
-            },
-          ],
-        },
-      });
-
-      expect(result.data.length).toBe(2);
-      expect(result.data[0].name).toBe('seriesA');
-      expect(result.data[1].name).toBe('seriesB');
-      expect(result.data[0].length).toBe(2);
-      expect(result.data[0].meta.notices.length).toBe(1);
-      expect(result.data[0].meta.notices[0].text).toBe('Data is rolled up, aggregated over 2h using Average function');
-      expect(result.data[1].meta.notices).toBeUndefined();
-    });
+    ctx.instanceSettings.url = '/api/datasources/proxy/1';
+    ctx.ds = new GraphiteDatasource(ctx.instanceSettings, ctx.templateSrv);
   });
 
   describe('When querying graphite with one target using query editor target spec', () => {
@@ -128,7 +53,7 @@ describe('graphiteDatasource', () => {
         });
       });
 
-      await ctx.ds.query(query as any).then((data: any) => {
+      await ctx.ds.query(query).then((data: any) => {
         results = data;
       });
     });
@@ -308,7 +233,7 @@ describe('graphiteDatasource', () => {
 
     describe('when formatting targets', () => {
       it('does not attempt to glob for one variable', () => {
-        ctx.templateSrv.init([
+        ctx.ds.templateSrv.init([
           {
             type: 'query',
             name: 'metric',
@@ -323,7 +248,7 @@ describe('graphiteDatasource', () => {
       });
 
       it('globs for more than one variable', () => {
-        ctx.templateSrv.init([
+        ctx.ds.templateSrv.init([
           {
             type: 'query',
             name: 'metric',
@@ -334,7 +259,6 @@ describe('graphiteDatasource', () => {
         const results = ctx.ds.buildGraphiteParams({
           targets: [{ target: 'my.[[metric]].*' }],
         });
-
         expect(results).toStrictEqual(['target=my.%7Ba%2Cb%7D.*', 'format=json']);
       });
     });
@@ -428,7 +352,7 @@ describe('graphiteDatasource', () => {
     });
 
     it('/metrics/find should be POST', () => {
-      ctx.templateSrv.init([
+      ctx.ds.templateSrv.init([
         {
           type: 'query',
           name: 'foo',

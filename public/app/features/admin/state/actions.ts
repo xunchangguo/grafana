@@ -17,11 +17,7 @@ import {
   clearUserMappingInfoAction,
   clearUserErrorAction,
   ldapFailedAction,
-  usersFetched,
-  queryChanged,
-  pageChanged,
 } from './reducers';
-import { debounce } from 'lodash';
 
 // UserAdminPage
 
@@ -241,35 +237,5 @@ export function clearUserMappingInfo(): ThunkResult<void> {
   return dispatch => {
     dispatch(clearUserErrorAction());
     dispatch(clearUserMappingInfoAction());
-  };
-}
-
-// UserListAdminPage
-
-export function fetchUsers(): ThunkResult<void> {
-  return async (dispatch, getState) => {
-    try {
-      const { perPage, page, query } = getState().userListAdmin;
-      const result = await getBackendSrv().get(`/api/users/search?perpage=${perPage}&page=${page}&query=${query}`);
-      dispatch(usersFetched(result));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-}
-
-const fetchUsersWithDebounce = debounce(dispatch => dispatch(fetchUsers()), 500);
-
-export function changeQuery(query: string): ThunkResult<void> {
-  return async dispatch => {
-    dispatch(queryChanged(query));
-    fetchUsersWithDebounce(dispatch);
-  };
-}
-
-export function changePage(page: number): ThunkResult<void> {
-  return async dispatch => {
-    dispatch(pageChanged(page));
-    dispatch(fetchUsers());
   };
 }

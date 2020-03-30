@@ -38,7 +38,6 @@ export function PromExploreQueryEditor(props: Props) {
       query={query}
       onRunQuery={onRunQuery}
       onChange={onChange}
-      onBlur={() => {}}
       history={history}
       data={data}
       ExtraFieldElement={

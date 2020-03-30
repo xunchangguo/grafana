@@ -175,8 +175,7 @@ class SingleStatCtrl extends MetricsPanelCtrl {
     }
 
     const distinct = getDistinctNames(frames);
-    let fieldInfo: FieldInfo | undefined = distinct.byName[panel.tableColumn];
-
+    let fieldInfo = distinct.byName[panel.tableColumn]; //
     this.fieldNames = distinct.names;
 
     if (!fieldInfo) {
@@ -700,7 +699,7 @@ function getColorForValue(data: any, value: number) {
 
 //------------------------------------------------
 // Private utility functions
-// Something like this should be avaliable in a
+// Somethign like this should be avaliable in a
 //  DataFrame[] abstraction helper
 //------------------------------------------------
 

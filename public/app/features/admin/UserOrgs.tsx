@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { css, cx } from 'emotion';
-import { Modal, Themeable, stylesFactory, withTheme, ConfirmButton, Button } from '@grafana/ui';
+import { Modal, Themeable, stylesFactory, withTheme, ConfirmButton, Forms } from '@grafana/ui';
 import { GrafanaTheme } from '@grafana/data';
 import { UserOrg, Organization } from 'app/types';
 import { OrgPicker, OrgSelectItem } from 'app/core/components/Select/OrgPicker';
@@ -52,9 +52,9 @@ export class UserOrgs extends PureComponent<Props, State> {
             </table>
           </div>
           <div className={addToOrgContainerClass}>
-            <Button variant="secondary" onClick={this.showOrgAddModal(true)}>
+            <Forms.Button variant="secondary" onClick={this.showOrgAddModal(true)}>
               Add user to organization
-            </Button>
+            </Forms.Button>
           </div>
           <AddToOrgModal isOpen={showAddOrgModal} onOrgAdd={onOrgAdd} onDismiss={this.showOrgAddModal(false)} />
         </div>
@@ -169,7 +169,7 @@ class UnThemedOrgRow extends PureComponent<OrgRowProps, OrgRowState> {
             <div className="pull-right">
               <ConfirmButton
                 confirmText="Confirm removal"
-                confirmVariant="destructive"
+                confirmVariant="danger"
                 onClick={this.onOrgRemoveClick}
                 onCancel={this.onCancelClick}
                 onConfirm={this.onOrgRemove}
@@ -258,12 +258,12 @@ export class AddToOrgModal extends PureComponent<AddToOrgModalProps, AddToOrgMod
           </div>
         </div>
         <div className={buttonRowClass}>
-          <Button variant="primary" onClick={this.onAddUserToOrg}>
+          <Forms.Button variant="primary" onClick={this.onAddUserToOrg}>
             Add to organization
-          </Button>
-          <Button variant="secondary" onClick={this.onCancel}>
+          </Forms.Button>
+          <Forms.Button variant="secondary" onClick={this.onCancel}>
             Cancel
-          </Button>
+          </Forms.Button>
         </div>
       </Modal>
     );

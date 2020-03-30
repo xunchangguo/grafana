@@ -14,13 +14,12 @@ import {
   TimeRange,
   LogsMetaItem,
   GraphSeriesXY,
-  Field,
 } from '@grafana/data';
 
 import { ExploreId, ExploreItemState } from 'app/types/explore';
 import { StoreState } from 'app/types';
 
-import { changeDedupStrategy, updateTimeRange, splitOpen } from './state/actions';
+import { changeDedupStrategy, updateTimeRange } from './state/actions';
 import { toggleLogLevelAction } from 'app/features/explore/state/actionTypes';
 import { deduplicatedRowsSelector } from 'app/features/explore/state/selectors';
 import { getTimeZone } from '../profile/state/selectors';
@@ -58,7 +57,6 @@ interface LogsContainerProps {
   syncedTimes: boolean;
   absoluteRange: AbsoluteTimeRange;
   isPaused: boolean;
-  splitOpen: typeof splitOpen;
 }
 
 export class LogsContainer extends PureComponent<LogsContainerProps> {
@@ -87,30 +85,6 @@ export class LogsContainer extends PureComponent<LogsContainerProps> {
     }
 
     return [];
-  };
-
-  /**
-   * Get links from the filed of a dataframe that was given to as and in addition check if there is associated
-   * metadata with datasource in which case we will add onClick to open the link in new split window. This assumes
-   * that we just supply datasource name and field value and Explore split window will know how to render that
-   * appropriately. This is for example used for transition from log with traceId to trace datasource to show that
-   * trace.
-   * @param field
-   * @param rowIndex
-   */
-  getFieldLinks = (field: Field, rowIndex: number) => {
-    const data = getLinksFromLogsField(field, rowIndex);
-    return data.map(d => {
-      if (d.link.meta?.datasourceName) {
-        return {
-          ...d.linkModel,
-          onClick: () => {
-            this.props.splitOpen(d.link.meta.datasourceName, field.values.get(rowIndex));
-          },
-        };
-      }
-      return d.linkModel;
-    });
   };
 
   render() {
@@ -175,7 +149,7 @@ export class LogsContainer extends PureComponent<LogsContainerProps> {
               scanRange={range.raw}
               width={width}
               getRowContext={this.getLogRowContext}
-              getFieldLinks={this.getFieldLinks}
+              getFieldLinks={getLinksFromLogsField}
             />
           </Collapse>
         </LogsCrossFadeTransition>
@@ -225,7 +199,6 @@ const mapDispatchToProps = {
   changeDedupStrategy,
   toggleLogLevelAction,
   updateTimeRange,
-  splitOpen,
 };
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(LogsContainer));

@@ -267,7 +267,7 @@ export class InfluxQueryCtrl extends QueryCtrl {
       });
 
       if (addTemplateVars) {
-        for (const variable of this.templateSrv.getVariables()) {
+        for (const variable of this.templateSrv.variables) {
           segments.unshift(
             this.uiSegmentSrv.newSegment({
               type: 'value',

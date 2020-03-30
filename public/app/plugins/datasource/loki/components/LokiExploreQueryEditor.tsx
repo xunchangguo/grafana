@@ -66,7 +66,6 @@ export function LokiExploreQueryEditor(props: Props) {
       datasource={datasource}
       query={query}
       onChange={onChange}
-      onBlur={() => {}}
       onRunQuery={onRunQuery}
       history={history}
       data={data}

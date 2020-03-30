@@ -15,7 +15,7 @@ import { PanelCtrl } from '../../panel/panel_ctrl';
 export function getPanelMenu(
   dashboard: DashboardModel,
   panel: PanelModel,
-  angularComponent?: AngularComponent | null
+  angularComponent?: AngularComponent
 ): PanelMenuItem[] {
   const onViewPanel = (event: React.MouseEvent<any>) => {
     event.preventDefault();

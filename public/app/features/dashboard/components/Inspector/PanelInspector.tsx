@@ -6,7 +6,7 @@ import { css } from 'emotion';
 import { InspectHeader } from './InspectHeader';
 
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
-import { JSONFormatter, Drawer, Select, Table, TabContent, stylesFactory, CustomScrollbar, Button } from '@grafana/ui';
+import { JSONFormatter, Drawer, Select, Table, TabContent, Forms, stylesFactory, CustomScrollbar } from '@grafana/ui';
 import { getLocationSrv, getDataSourceSrv } from '@grafana/runtime';
 import {
   DataFrame,
@@ -16,9 +16,7 @@ import {
   toCSV,
   DataQueryError,
   PanelData,
-  getValueFormat,
-  formattedValueToString,
-  QueryResultMetaStat,
+  DataQuery,
 } from '@grafana/data';
 import { config } from 'app/core/config';
 
@@ -53,6 +51,8 @@ interface State {
   // If the datasource supports custom metadata
   metaDS?: DataSourceApi;
 
+  stats: { requestTime: number; queries: number; dataSources: number; processingTime: number };
+
   drawerWidth: string;
 }
 
@@ -65,6 +65,7 @@ export class PanelInspector extends PureComponent<Props, State> {
       selected: 0,
       tab: props.selectedTab || InspectTab.Data,
       drawerWidth: '50%',
+      stats: { requestTime: 0, queries: 0, dataSources: 0, processingTime: 0 },
     };
   }
 
@@ -88,13 +89,23 @@ export class PanelInspector extends PureComponent<Props, State> {
     const error = lastResult.error;
 
     const targets = lastResult.request?.targets || [];
+    const requestTime = lastResult.request?.endTime ? lastResult.request?.endTime - lastResult.request.startTime : -1;
+    const dataSources = new Set(targets.map(t => t.datasource)).size;
+    const processingTime = lastResult.timings?.dataProcessingTime || -1;
 
     // Find the first DataSource wanting to show custom metadata
     if (data && targets.length) {
+      const queries: Record<string, DataQuery> = {};
+
+      for (const target of targets) {
+        queries[target.refId] = target;
+      }
+
       for (const frame of data) {
-        if (frame.meta && frame.meta.custom) {
-          // get data source from first query
-          const dataSource = await getDataSourceSrv().get(targets[0].datasource);
+        const q = queries[frame.refId];
+
+        if (q && frame.meta && frame.meta.custom) {
+          const dataSource = await getDataSourceSrv().get(q.datasource);
 
           if (dataSource && dataSource.components?.MetadataInspector) {
             metaDS = dataSource;
@@ -110,6 +121,12 @@ export class PanelInspector extends PureComponent<Props, State> {
       data,
       metaDS,
       tab: error ? InspectTab.Error : prevState.tab,
+      stats: {
+        requestTime,
+        queries: targets.length,
+        dataSources,
+        processingTime,
+      },
     }));
   }
 
@@ -167,6 +184,7 @@ export class PanelInspector extends PureComponent<Props, State> {
       };
     });
 
+    // Apply dummy styles
     const processed = applyFieldOverrides({
       data,
       theme: config.theme,
@@ -189,9 +207,9 @@ export class PanelInspector extends PureComponent<Props, State> {
             </div>
           )}
           <div className={styles.downloadCsv}>
-            <Button variant="primary" onClick={() => this.exportCsv(processed[selected])}>
+            <Forms.Button variant="primary" onClick={() => this.exportCsv(processed[selected])}>
               Download CSV
-            </Button>
+            </Forms.Button>
           </div>
         </div>
         <div style={{ flexGrow: 1 }}>
@@ -233,66 +251,29 @@ export class PanelInspector extends PureComponent<Props, State> {
   }
 
   renderStatsTab() {
-    const { last } = this.state;
-    const { request } = last;
-
-    if (!request) {
-      return null;
-    }
-
-    let stats: QueryResultMetaStat[] = [];
-
-    const requestTime = request.endTime ? request.endTime - request.startTime : -1;
-    const processingTime = last.timings?.dataProcessingTime || -1;
-    let dataRows = 0;
-
-    for (const frame of last.series) {
-      dataRows += frame.length;
-    }
-
-    stats.push({ title: 'Total request time', value: requestTime, unit: 'ms' });
-    stats.push({ title: 'Data processing time', value: processingTime, unit: 'ms' });
-    stats.push({ title: 'Number of queries', value: request.targets.length });
-    stats.push({ title: 'Total number rows', value: dataRows });
-
-    let dataStats: QueryResultMetaStat[] = [];
-
-    for (const series of last.series) {
-      if (series.meta && series.meta.stats) {
-        dataStats = dataStats.concat(series.meta.stats);
-      }
-    }
-
+    const { stats } = this.state;
     return (
-      <>
-        {this.renderStatsTable('Stats', stats)}
-        {dataStats.length && this.renderStatsTable('Data source stats', dataStats)}
-      </>
-    );
-  }
-
-  renderStatsTable(name: string, stats: QueryResultMetaStat[]) {
-    return (
-      <div style={{ paddingBottom: '16px' }}>
-        <div className="section-heading">{name}</div>
-        <table className="filter-table width-30">
-          <tbody>
-            {stats.map(stat => {
-              return (
-                <tr>
-                  <td>{stat.title}</td>
-                  <td style={{ textAlign: 'right' }}>{formatStat(stat.value, stat.unit)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <table className="filter-table width-30">
+        <tbody>
+          <tr>
+            <td>Query time</td>
+            <td>{`${stats.requestTime === -1 ? 'N/A' : stats.requestTime + 'ms'}`}</td>
+          </tr>
+          <tr>
+            <td>Data processing time</td>
+            <td>{`${
+              stats.processingTime === -1
+                ? 'N/A'
+                : Math.round((stats.processingTime + Number.EPSILON) * 100) / 100 + 'ms'
+            }`}</td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
 
   drawerHeader = () => {
-    const { tab, last } = this.state;
+    const { tab, last, stats } = this.state;
     const error = last?.error;
     const tabs = [];
 
@@ -315,7 +296,7 @@ export class PanelInspector extends PureComponent<Props, State> {
       <InspectHeader
         tabs={tabs}
         tab={tab}
-        panelData={last}
+        stats={stats}
         onSelectTab={this.onSelectTab}
         onClose={this.onDismiss}
         panel={this.props.panel}
@@ -343,14 +324,6 @@ export class PanelInspector extends PureComponent<Props, State> {
         </TabContent>
       </Drawer>
     );
-  }
-}
-
-function formatStat(value: any, unit?: string): string {
-  if (unit) {
-    return formattedValueToString(getValueFormat(unit)(value));
-  } else {
-    return value;
   }
 }
 

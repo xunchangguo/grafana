@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
-import { DataLink, ScopedVars, PanelMenuItem, PanelData, LoadingState, QueryResultMetaNotice } from '@grafana/data';
+import { DataLink, ScopedVars, PanelMenuItem } from '@grafana/data';
 import { AngularComponent } from '@grafana/runtime';
-import { ClickOutsideWrapper, Tooltip } from '@grafana/ui';
+import { ClickOutsideWrapper } from '@grafana/ui';
 import { e2e } from '@grafana/e2e';
 
 import PanelHeaderCorner from './PanelHeaderCorner';
@@ -14,20 +14,19 @@ import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getPanelLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
 import { getPanelMenu } from 'app/features/dashboard/utils/getPanelMenu';
-import { updateLocation } from 'app/core/actions';
 
 export interface Props {
   panel: PanelModel;
   dashboard: DashboardModel;
+  timeInfo?: string;
   title?: string;
   description?: string;
   scopedVars?: ScopedVars;
-  angularComponent?: AngularComponent | null;
+  angularComponent?: AngularComponent;
   links?: DataLink[];
   error?: string;
   isFullscreen: boolean;
-  data: PanelData;
-  updateLocation: typeof updateLocation;
+  isLoading: boolean;
 }
 
 interface ClickCoordinates {
@@ -93,35 +92,8 @@ export class PanelHeader extends Component<Props, State> {
     );
   }
 
-  openInspect = (e: React.SyntheticEvent, tab: string) => {
-    const { updateLocation, panel } = this.props;
-
-    e.stopPropagation();
-
-    updateLocation({
-      query: { inspect: panel.id, tab },
-      partial: true,
-    });
-  };
-
-  renderNotice = (notice: QueryResultMetaNotice) => {
-    return (
-      <Tooltip content={notice.text} key={notice.severity}>
-        {notice.inspect ? (
-          <div className="panel-info-notice" onClick={e => this.openInspect(e, notice.inspect!)}>
-            <span className="fa fa-info-circle" style={{ marginRight: '8px', cursor: 'pointer' }} />
-          </div>
-        ) : (
-          <a className="panel-info-notice" href={notice.url} target="_blank">
-            <span className="fa fa-info-circle" style={{ marginRight: '8px', cursor: 'pointer' }} />
-          </a>
-        )}
-      </Tooltip>
-    );
-  };
-
   render() {
-    const { panel, scopedVars, error, isFullscreen, data } = this.props;
+    const { panel, timeInfo, scopedVars, error, isFullscreen, isLoading } = this.props;
     const { menuItems } = this.state;
     const title = templateSrv.replaceWithText(panel.title, scopedVars);
 
@@ -130,20 +102,9 @@ export class PanelHeader extends Component<Props, State> {
       'grid-drag-handle': !isFullscreen,
     });
 
-    // dedupe on severity
-    const notices: Record<string, QueryResultMetaNotice> = {};
-
-    for (const series of data.series) {
-      if (series.meta && series.meta.notices) {
-        for (const notice of series.meta.notices) {
-          notices[notice.severity] = notice;
-        }
-      }
-    }
-
     return (
       <>
-        {data.state === LoadingState.Loading && this.renderLoadingState()}
+        {isLoading && this.renderLoadingState()}
         <div className={panelHeaderClass}>
           <PanelHeaderCorner
             panel={panel}
@@ -160,7 +121,6 @@ export class PanelHeader extends Component<Props, State> {
             aria-label={e2e.pages.Dashboard.Panels.Panel.selectors.title(title)}
           >
             <div className="panel-title">
-              {Object.values(notices).map(this.renderNotice)}
               <span className="icon-gf panel-alert-icon" />
               <span className="panel-title-text">
                 {title} <span className="fa fa-caret-down panel-menu-toggle" />
@@ -170,9 +130,9 @@ export class PanelHeader extends Component<Props, State> {
                   <PanelHeaderMenu items={menuItems} />
                 </ClickOutsideWrapper>
               )}
-              {data.request && data.request.timeInfo && (
+              {timeInfo && (
                 <span className="panel-time-info">
-                  <i className="fa fa-clock-o" /> {data.request.timeInfo}
+                  <i className="fa fa-clock-o" /> {timeInfo}
                 </span>
               )}
             </div>

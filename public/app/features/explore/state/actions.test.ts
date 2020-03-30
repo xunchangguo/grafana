@@ -1,8 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { DataQuery, DefaultTimeZone, ExploreMode, LogsDedupStrategy, RawTimeRange, toUtc } from '@grafana/data';
+import { DataQuery, DefaultTimeZone, LogsDedupStrategy, RawTimeRange, toUtc, ExploreMode } from '@grafana/data';
 
 import * as Actions from './actions';
-import { changeDatasource, loadDatasource, navigateToExplore, refreshExplore, cancelQueries } from './actions';
+import { changeDatasource, loadDatasource, navigateToExplore, refreshExplore } from './actions';
 import { ExploreId, ExploreUpdateState, ExploreUrlState } from 'app/types';
 import { thunkTester } from 'test/core/thunk/thunkTester';
 import {
@@ -13,8 +13,6 @@ import {
   setQueriesAction,
   updateDatasourceInstanceAction,
   updateUIStateAction,
-  cancelQueriesAction,
-  scanStopAction,
 } from './actionTypes';
 import { Emitter } from 'app/core/core';
 import { makeInitialUpdateState } from './reducers';
@@ -22,7 +20,6 @@ import { PanelModel } from 'app/features/dashboard/state';
 import { updateLocation } from '../../../core/actions';
 import { MockDataSourceApi } from '../../../../test/mocks/datasource_srv';
 import * as DatasourceSrv from 'app/features/plugins/datasource_srv';
-import { interval } from 'rxjs';
 
 jest.mock('app/features/plugins/datasource_srv');
 const getDatasourceSrvMock = (DatasourceSrv.getDatasourceSrv as any) as jest.Mock<DatasourceSrv.DatasourceSrv>;
@@ -177,40 +174,6 @@ describe('refreshExplore', () => {
   });
 });
 
-describe('running queries', () => {
-  it('should cancel running query when cancelQueries is dispatched', async () => {
-    const unsubscribable = interval(1000);
-    unsubscribable.subscribe();
-    const exploreId = ExploreId.left;
-    const initialState = {
-      explore: {
-        [exploreId]: {
-          datasourceInstance: 'test-datasource',
-          initialized: true,
-          loading: true,
-          querySubscription: unsubscribable,
-          queries: ['A'],
-          range: testRange,
-        },
-      },
-
-      user: {
-        orgId: 'A',
-      },
-    };
-
-    const dispatchedActions = await thunkTester(initialState)
-      .givenThunk(cancelQueries)
-      .whenThunkIsDispatched(exploreId);
-
-    expect(dispatchedActions).toEqual([
-      scanStopAction({ exploreId }),
-      cancelQueriesAction({ exploreId }),
-      expect.anything(),
-    ]);
-  });
-});
-
 describe('changing datasource', () => {
   it('should switch to logs mode when changing from prometheus to loki', async () => {
     const lokiMock = {
@@ -326,7 +289,7 @@ describe('loading datasource', () => {
   });
 });
 
-const getNavigateToExploreContext = async (openInNewWindow?: (url: string) => void) => {
+const getNavigateToExploreContext = async (openInNewWindow: (url: string) => void = undefined) => {
   const url = 'http://www.someurl.com';
   const panel: Partial<PanelModel> = {
     datasource: 'mocked datasource',
@@ -357,7 +320,7 @@ const getNavigateToExploreContext = async (openInNewWindow?: (url: string) => vo
 describe('navigateToExplore', () => {
   describe('when navigateToExplore thunk is dispatched', () => {
     describe('and openInNewWindow is undefined', () => {
-      const openInNewWindow: (url: string) => void = (undefined as unknown) as (url: string) => void;
+      const openInNewWindow: (url: string) => void = undefined;
       it('then it should dispatch correct actions', async () => {
         const { dispatchedActions, url } = await getNavigateToExploreContext(openInNewWindow);
 

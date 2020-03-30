@@ -1,11 +1,8 @@
 import React, { PureComponent } from 'react';
-import { DataSourceHttpSettings, FormLabel, Select, Switch } from '@grafana/ui';
-import {
-  DataSourcePluginOptionsEditorProps,
-  onUpdateDatasourceJsonDataOptionSelect,
-  onUpdateDatasourceJsonDataOptionChecked,
-} from '@grafana/data';
+import { DataSourceHttpSettings, FormLabel, Button, Select } from '@grafana/ui';
+import { DataSourcePluginOptionsEditorProps, onUpdateDatasourceJsonDataOptionSelect } from '@grafana/data';
 import { GraphiteOptions, GraphiteType } from '../types';
+import styles from './ConfigEditor.styles';
 
 const graphiteVersions = [
   { label: '0.9.x', value: '0.9' },
@@ -20,27 +17,22 @@ const graphiteTypes = Object.entries(GraphiteType).map(([label, value]) => ({
 
 export type Props = DataSourcePluginOptionsEditorProps<GraphiteOptions>;
 
-export class ConfigEditor extends PureComponent<Props> {
+interface State {
+  showMetricTankHelp: boolean;
+}
+
+export class ConfigEditor extends PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-  }
 
-  renderTypeHelp = () => {
-    return (
-      <p>
-        There are different types of Graphite compatible backends. Here you can specify the type you are using. If you
-        are using{' '}
-        <a href="https://github.com/grafana/metrictank" className="pointer" target="_blank">
-          Metrictank
-        </a>{' '}
-        then select that here. This will enable Metrictank specific features like query processing meta data. Metrictank
-        is a multi-tenant timeseries engine for Graphite and friends.
-      </p>
-    );
-  };
+    this.state = {
+      showMetricTankHelp: false,
+    };
+  }
 
   render() {
     const { options, onOptionsChange } = this.props;
+    const { showMetricTankHelp } = this.state;
 
     const currentVersion =
       graphiteVersions.find(item => item.value === options.jsonData.graphiteVersion) ?? graphiteVersions[2];
@@ -69,25 +61,39 @@ export class ConfigEditor extends PureComponent<Props> {
           </div>
           <div className="gf-form-inline">
             <div className="gf-form">
-              <FormLabel tooltip={this.renderTypeHelp}>Type</FormLabel>
+              <FormLabel>Type</FormLabel>
               <Select
                 options={graphiteTypes}
                 value={graphiteTypes.find(type => type.value === options.jsonData.graphiteType)}
                 width={8}
                 onChange={onUpdateDatasourceJsonDataOptionSelect(this.props, 'graphiteType')}
               />
+
+              <div className={styles.helpbtn}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() =>
+                    this.setState((prevState: State) => ({ showMetricTankHelp: !prevState.showMetricTankHelp }))
+                  }
+                >
+                  Help <i className={showMetricTankHelp ? 'fa fa-caret-down' : 'fa fa-caret-right'} />
+                </Button>
+              </div>
             </div>
           </div>
-          {options.jsonData.graphiteType === GraphiteType.Metrictank && (
-            <div className="gf-form-inline">
-              <div className="gf-form">
-                <Switch
-                  label="Rollup indicator"
-                  labelClass={'width-10'}
-                  tooltip="Shows up as an info icon in panel headers when data is aggregated"
-                  checked={options.jsonData.rollupIndicatorEnabled}
-                  onChange={onUpdateDatasourceJsonDataOptionChecked(this.props, 'rollupIndicatorEnabled')}
-                />
+          {showMetricTankHelp && (
+            <div className="grafana-info-box m-t-2">
+              <div className="alert-body">
+                <p>
+                  There are different types of Graphite compatible backends. Here you can specify the type you are
+                  using. If you are using{' '}
+                  <a href="https://github.com/grafana/metrictank" className="pointer" target="_blank">
+                    Metrictank
+                  </a>{' '}
+                  then select that here. This will enable Metrictank specific features like query processing meta data.
+                  Metrictank is a multi-tenant timeseries engine for Graphite and friends.
+                </p>
               </div>
             </div>
           )}

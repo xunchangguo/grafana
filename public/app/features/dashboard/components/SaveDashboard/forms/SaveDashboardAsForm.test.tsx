@@ -43,7 +43,6 @@ const renderAndSubmitForm = async (dashboard: any, submitSpy: any) => {
     />
   );
 
-  // @ts-ignore strict null error below
   await act(async () => {
     const button = container.find('button[aria-label="Save dashboard button"]');
     button.simulate('submit');

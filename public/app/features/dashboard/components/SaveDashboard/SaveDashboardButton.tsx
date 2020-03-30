@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, ButtonVariant, ModalsController, FullWidthButtonContainer } from '@grafana/ui';
+import { css } from 'emotion';
+import { Button, Forms, ModalsController } from '@grafana/ui';
 import { DashboardModel } from 'app/features/dashboard/state';
 import { connectWithProvider } from 'app/core/utils/connectWithReduxStore';
 import { provideModalsContext } from 'app/routes/ReactContainer';
@@ -23,11 +24,12 @@ export const SaveDashboardButton: React.FC<SaveDashboardButtonProps> = ({
   getDashboard,
   useNewForms,
 }) => {
+  const ButtonComponent = useNewForms ? Forms.Button : Button;
   return (
     <ModalsController>
       {({ showModal, hideModal }) => {
         return (
-          <Button
+          <ButtonComponent
             onClick={() => {
               showModal(SaveDashboardModalProxy, {
                 // TODO[angular-migrations]: Remove tenary op when we migrate Dashboard Settings view to React
@@ -38,41 +40,46 @@ export const SaveDashboardButton: React.FC<SaveDashboardButtonProps> = ({
             }}
           >
             Save dashboard
-          </Button>
+          </ButtonComponent>
         );
       }}
     </ModalsController>
   );
 };
 
-export const SaveDashboardAsButton: React.FC<SaveDashboardButtonProps & { variant?: ButtonVariant }> = ({
+export const SaveDashboardAsButton: React.FC<SaveDashboardButtonProps & { variant?: string }> = ({
   dashboard,
   onSaveSuccess,
   getDashboard,
+  useNewForms,
   variant,
 }) => {
+  const ButtonComponent = useNewForms ? Forms.Button : Button;
   return (
     <ModalsController>
       {({ showModal, hideModal }) => {
         return (
-          <FullWidthButtonContainer>
-            <Button
-              onClick={() => {
-                showModal(SaveDashboardAsModal, {
-                  // TODO[angular-migrations]: Remove tenary op when we migrate Dashboard Settings view to React
-                  dashboard: getDashboard ? getDashboard() : dashboard,
-                  onSaveSuccess,
-                  onDismiss: hideModal,
-                });
-              }}
-              // TODO[angular-migrations]: Hacking the different variants for this single button
-              // In Dashboard Settings in sidebar we need to use new form but with inverse variant to make it look like it should
-              // Everywhere else we use old button component :(
-              variant={variant as ButtonVariant}
-            >
-              Save As...
-            </Button>
-          </FullWidthButtonContainer>
+          <ButtonComponent
+            /* Styles applied here are specific to dashboard settings view */
+            className={css`
+              width: 100%;
+              justify-content: center;
+            `}
+            onClick={() => {
+              showModal(SaveDashboardAsModal, {
+                // TODO[angular-migrations]: Remove tenary op when we migrate Dashboard Settings view to React
+                dashboard: getDashboard ? getDashboard() : dashboard,
+                onSaveSuccess,
+                onDismiss: hideModal,
+              });
+            }}
+            // TODO[angular-migrations]: Hacking the different variants for this single button
+            // In Dashboard Settings in sidebar we need to use new form but with inverse variant to make it look like it should
+            // Everywhere else we use old button component :(
+            variant={variant as any}
+          >
+            Save As...
+          </ButtonComponent>
         );
       }}
     </ModalsController>

@@ -7,7 +7,6 @@ import { updateLocation, updateNavIndex } from 'app/core/actions';
 import { buildNavModel } from './navModel';
 import appEvents from 'app/core/app_events';
 import { loadFolder, loadFolderPermissions } from './reducers';
-import { getBackendSrv } from '@grafana/runtime';
 
 export function getFolderByUid(uid: string): ThunkResult<void> {
   return async dispatch => {
@@ -117,14 +116,5 @@ export function addFolderPermission(newItem: NewDashboardAclItem): ThunkResult<v
 
     await backendSrv.post(`/api/folders/${folder.uid}/permissions`, { items: itemsToUpdate });
     await dispatch(getFolderPermissions(folder.uid));
-  };
-}
-
-export function createNewFolder(folderName: string): ThunkResult<void> {
-  return async dispatch => {
-    // @ts-ignore
-    const newFolder = await getBackendSrv().createFolder({ title: folderName });
-    appEvents.emit(AppEvents.alertSuccess, ['Folder Created', 'OK']);
-    dispatch(updateLocation({ path: newFolder.url }));
   };
 }

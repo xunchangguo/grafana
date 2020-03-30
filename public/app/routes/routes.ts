@@ -2,17 +2,18 @@ import './dashboard_loaders';
 import './ReactContainer';
 import { applyRouteRegistrationHandlers } from './registry';
 // Pages
+import CreateFolderCtrl from 'app/features/folders/CreateFolderCtrl';
 import FolderDashboardsCtrl from 'app/features/folders/FolderDashboardsCtrl';
 import DashboardImportCtrl from 'app/features/manage-dashboards/DashboardImportCtrl';
 import LdapPage from 'app/features/admin/ldap/LdapPage';
 import UserAdminPage from 'app/features/admin/UserAdminPage';
 import SignupPage from 'app/features/profile/SignupPage';
-import { LoginPage } from 'app/core/components/Login/LoginPage';
 
 import config from 'app/core/config';
 import { ILocationProvider, route } from 'angular';
 // Types
 import { DashboardRouteInfo } from 'app/types';
+import { LoginPage } from 'app/core/components/Login/LoginPage';
 import { SafeDynamicImport } from '../core/components/DynamicImports/SafeDynamicImport';
 
 /** @ngInject */
@@ -158,13 +159,9 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
       controllerAs: 'ctrl',
     })
     .when('/dashboards/folder/new', {
-      template: '<react-container />',
-      resolve: {
-        component: () =>
-          SafeDynamicImport(
-            import(/* webpackChunkName: "NewDashboardsFolder"*/ 'app/features/folders/components/NewDashboardsFolder')
-          ),
-      },
+      templateUrl: 'public/app/features/folders/partials/create_folder.html',
+      controller: CreateFolderCtrl,
+      controllerAs: 'ctrl',
     })
     .when('/dashboards/f/:uid/:slug/permissions', {
       template: '<react-container />',
@@ -197,7 +194,6 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
     .when('/explore', {
       template: '<react-container />',
       reloadOnSearch: false,
-      pageClass: 'page-explore',
       resolve: {
         roles: () => (config.viewersCanEdit ? [] : ['Editor', 'Admin']),
         component: () => SafeDynamicImport(import(/* webpackChunkName: "explore" */ 'app/features/explore/Wrapper')),
@@ -220,10 +216,8 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
       },
     })
     .when('/org/new', {
-      template: '<react-container />',
-      resolve: {
-        component: () => SafeDynamicImport(import(/* webpackChunkName: "NewOrgPage" */ 'app/features/org/NewOrgPage')),
-      },
+      templateUrl: 'public/app/features/org/partials/newOrg.html',
+      controller: 'NewOrgCtrl',
     })
     .when('/org/users', {
       template: '<react-container />',
@@ -307,11 +301,9 @@ export function setupAngularRoutes($routeProvider: route.IRouteProvider, $locati
       },
     })
     .when('/admin/users', {
-      template: '<react-container />',
-      resolve: {
-        component: () =>
-          SafeDynamicImport(import(/* webpackChunkName: "UserListAdminPage" */ 'app/features/admin/UserListAdminPage')),
-      },
+      templateUrl: 'public/app/features/admin/partials/users.html',
+      controller: 'AdminListUsersCtrl',
+      controllerAs: 'ctrl',
     })
     .when('/admin/users/create', {
       template: '<react-container />',

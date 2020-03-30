@@ -1,6 +1,6 @@
 import React from 'react';
 import { GraphSeriesToggler } from '@grafana/ui';
-import { PanelData, GraphSeriesXY, AbsoluteTimeRange, TimeZone, FieldConfigSource } from '@grafana/data';
+import { PanelData, GraphSeriesXY, AbsoluteTimeRange, TimeZone } from '@grafana/data';
 
 import { getGraphSeriesModel } from './getGraphSeriesModel';
 import { Options, SeriesOptions } from './types';
@@ -18,7 +18,6 @@ interface GraphPanelControllerAPI {
 interface GraphPanelControllerProps {
   children: (api: GraphPanelControllerAPI) => JSX.Element;
   options: Options;
-  fieldConfig: FieldConfigSource;
   data: PanelData;
   timeZone: TimeZone;
   onOptionsChange: (options: Options) => void;
@@ -45,7 +44,7 @@ export class GraphPanelController extends React.Component<GraphPanelControllerPr
         props.options.series,
         props.options.graph,
         props.options.legend,
-        props.fieldConfig
+        props.options.fieldOptions
       ),
     };
   }
@@ -59,7 +58,7 @@ export class GraphPanelController extends React.Component<GraphPanelControllerPr
         props.options.series,
         props.options.graph,
         props.options.legend,
-        props.fieldConfig
+        props.options.fieldOptions
       ),
     };
   }

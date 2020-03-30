@@ -9,7 +9,6 @@ import { auto } from 'angular';
 import { TemplateSrv } from 'app/features/templating/template_srv';
 import { CoreEvents } from 'app/types';
 import { PanelEvents } from '@grafana/data';
-import { VariableWithMultiSupport } from 'app/features/templating/types';
 
 export interface QueryMeta {
   sql: string;
@@ -302,10 +301,10 @@ export class MysqlQueryCtrl extends QueryCtrl {
       });
 
       if (config.addTemplateVars) {
-        for (const variable of this.templateSrv.getVariables()) {
+        for (const variable of this.templateSrv.variables) {
           let value;
           value = '$' + variable.name;
-          if (config.templateQuoter && ((variable as unknown) as VariableWithMultiSupport).multi === false) {
+          if (config.templateQuoter && variable.multi === false) {
             value = config.templateQuoter(value);
           }
 

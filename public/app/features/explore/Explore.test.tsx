@@ -148,12 +148,13 @@ describe('Explore', () => {
   it('should filter out a query-row-specific error when looking for non-query-row-specific errors', async () => {
     const queryErrors = setupErrors(true);
     const queryError = getFirstNonQueryRowSpecificError(queryErrors);
-    expect(queryError).toBeUndefined();
+    expect(queryError).toBeNull();
   });
 
   it('should not filter out a generic error when looking for non-query-row-specific errors', async () => {
     const queryErrors = setupErrors();
     const queryError = getFirstNonQueryRowSpecificError(queryErrors);
+    expect(queryError).not.toBeNull();
     expect(queryError).toEqual({
       message: 'Error message',
       status: '400',

@@ -11,10 +11,9 @@ import {
 } from '@grafana/data';
 import { fieldMatchersUI, stylesFactory, useTheme, ValuePicker, selectThemeVariant } from '@grafana/ui';
 import { DynamicConfigValueEditor } from './DynamicConfigValueEditor';
-
+import { OverrideHeader } from './OverrideHeader';
 import { getDataLinksVariableSuggestions } from '../../../panel/panellinks/link_srv';
 import { css } from 'emotion';
-import { FieldConfigItemHeaderTitle } from '@grafana/ui/src/components/FieldConfigs/FieldConfigItemHeaderTitle';
 
 interface OverrideEditorProps {
   data: DataFrame[];
@@ -78,7 +77,8 @@ export const OverrideEditor: React.FC<OverrideEditorProps> = ({
   const styles = getStyles(theme);
   return (
     <div className={styles.wrapper}>
-      <FieldConfigItemHeaderTitle onRemove={onRemove} title={matcherUi.name} description={matcherUi.description}>
+      <div className={styles.headerWrapper}>
+        <OverrideHeader onRemove={onRemove} title={matcherUi.name} description={matcherUi.description} />
         <div className={styles.matcherUi}>
           <matcherUi.component
             matcher={matcherUi.matcher}
@@ -87,7 +87,7 @@ export const OverrideEditor: React.FC<OverrideEditorProps> = ({
             onChange={option => onMatcherConfigChange(option)}
           />
         </div>
-      </FieldConfigItemHeaderTitle>
+      </div>
       <div>
         {override.properties.map((p, j) => {
           const reg = p.custom ? customPropertiesRegistry : standardFieldConfigEditorRegistry;
@@ -137,6 +137,14 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
     theme.type
   );
 
+  const headerBg = selectThemeVariant(
+    {
+      light: theme.colors.white,
+      dark: theme.colors.dark1,
+    },
+    theme.type
+  );
+
   const shadow = selectThemeVariant(
     {
       light: theme.colors.gray85,
@@ -154,6 +162,10 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
       &:hover {
         box-shadow: 0 0 10px ${shadow};
       }
+    `,
+    headerWrapper: css`
+      background: ${headerBg};
+      padding: ${theme.spacing.xs} 0;
     `,
     matcherUi: css`
       padding: ${theme.spacing.sm};

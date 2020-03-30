@@ -1,1 +1,2 @@
 import './SelectOrgCtrl';
+import './NewOrgCtrl';

@@ -51,21 +51,16 @@ interface RichHistoryState {
 
 const getStyles = stylesFactory((theme: GrafanaTheme) => {
   const borderColor = theme.isLight ? theme.colors.gray5 : theme.colors.dark6;
-  const tabContentBg = theme.colors.pageBg;
+  const tabBarBg = theme.isLight ? theme.colors.white : theme.colors.black;
+  const tabContentBg = theme.isLight ? theme.colors.gray7 : theme.colors.dark2;
   return {
     container: css`
       height: 100%;
-    `,
-    tabContent: css`
-      padding: ${theme.spacing.md};
       background-color: ${tabContentBg};
     `,
-    close: css`
-      position: absolute;
-      right: 16px;
-      top: 5px;
-      cursor: pointer;
-      font-size: ${theme.typography.size.lg};
+    tabContent: css`
+      background-color: ${tabContentBg};
+      padding: ${theme.spacing.md};
     `,
     close: css`
       position: absolute;
@@ -73,6 +68,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
       cursor: pointer;
     `,
     tabs: css`
+      background-color: ${tabBarBg};
       padding-top: ${theme.spacing.sm};
       border-color: ${borderColor};
       ul {

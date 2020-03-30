@@ -29,14 +29,12 @@ export interface UserDTO {
   name: string;
   isGrafanaAdmin: boolean;
   isDisabled: boolean;
-  isAdmin?: boolean;
   isExternal?: boolean;
   updatedAt?: string;
   authLabels?: string[];
   theme?: string;
   avatarUrl?: string;
   orgId?: number;
-  lastSeenAtAge?: string;
 }
 
 export interface Invitee {
@@ -102,13 +100,4 @@ export interface UserAdminState {
 export interface UserAdminError {
   title: string;
   body: string;
-}
-
-export interface UserListAdminState {
-  users: UserDTO[];
-  query: string;
-  perPage: number;
-  page: number;
-  totalPages: number;
-  showPaging: boolean;
 }

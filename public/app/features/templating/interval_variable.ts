@@ -9,7 +9,7 @@ import {
   VariableRefresh,
   VariableType,
   variableTypes,
-} from './types';
+} from './variable';
 import { TimeSrv } from '../dashboard/services/TimeSrv';
 import { TemplateSrv } from './template_srv';
 import { VariableSrv } from './variable_srv';

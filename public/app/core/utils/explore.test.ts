@@ -1,34 +1,34 @@
 import {
-  buildQueryTransaction,
-  clearHistory,
   DEFAULT_RANGE,
+  serializeStateToUrlParam,
+  parseUrlState,
+  updateHistory,
+  clearHistory,
+  hasNonEmptyQuery,
+  getValueWithRefId,
   getFirstQueryErrorWithoutRefId,
   getRefIds,
-  getValueWithRefId,
-  hasNonEmptyQuery,
-  parseUrlState,
   refreshIntervalToSortOrder,
-  serializeStateToUrlParam,
-  sortLogsResult,
   SortOrder,
-  updateHistory,
+  sortLogsResult,
+  buildQueryTransaction,
 } from './explore';
 import { ExploreUrlState } from 'app/types/explore';
 import store from 'app/core/store';
 import {
   DataQueryError,
-  dateTime,
-  ExploreMode,
-  LogLevel,
-  LogRowModel,
   LogsDedupStrategy,
   LogsModel,
+  LogLevel,
+  dateTime,
   MutableDataFrame,
+  ExploreMode,
+  LogRowModel,
 } from '@grafana/data';
 import { RefreshPicker } from '@grafana/ui';
 
 const DEFAULT_EXPLORE_STATE: ExploreUrlState = {
-  datasource: '',
+  datasource: null,
   queries: [],
   range: DEFAULT_RANGE,
   mode: ExploreMode.Metrics,
@@ -259,7 +259,7 @@ describe('hasRefId', () => {
 describe('getFirstQueryErrorWithoutRefId', () => {
   describe('when called with a null value', () => {
     it('then it should return undefined', () => {
-      const errors: DataQueryError[] | undefined = undefined;
+      const errors: DataQueryError[] = null;
       const result = getFirstQueryErrorWithoutRefId(errors);
 
       expect(result).toBeUndefined();
