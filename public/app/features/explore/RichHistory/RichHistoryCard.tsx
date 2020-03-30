@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { css, cx } from 'emotion';
-import { stylesFactory, useTheme, Forms, Button } from '@grafana/ui';
+import { stylesFactory, useTheme, Forms } from '@grafana/ui';
 import { GrafanaTheme, AppEvents, DataSourceApi } from '@grafana/data';
 import { RichHistoryQuery, ExploreId } from 'app/types/explore';
 import { copyStringToClipboard, createUrlFromRichHistory, createDataQuery } from 'app/core/utils/richHistory';
@@ -36,6 +36,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme, isRemoved: boolean) => {
     : isRemoved
     ? theme.colors.gray15
     : theme.colors.gray05;
+  const cardBoxShadow = theme.isLight ? `0px 2px 2px ${borderColor}` : `0px 2px 4px black`;
 
   return {
     queryCard: css`
@@ -43,6 +44,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme, isRemoved: boolean) => {
       flex-direction: column;
       border: 1px solid ${borderColor};
       margin: ${theme.spacing.sm} 0;
+      box-shadow: ${cardBoxShadow};
       background-color: ${cardColor};
       border-radius: ${theme.border.radius.sm};
       .starred {
@@ -202,10 +204,10 @@ export function RichHistoryCard(props: Props) {
         className={styles.textArea}
       />
       <div className={styles.commentButtonRow}>
-        <Button onClick={onUpdateComment}>Save comment</Button>
-        <Button variant="secondary" onClick={onCancelUpdateComment}>
+        <Forms.Button onClick={onUpdateComment}>Save comment</Forms.Button>
+        <Forms.Button variant="secondary" onClick={onCancelUpdateComment}>
           Cancel
-        </Button>
+        </Forms.Button>
       </div>
     </div>
   );
@@ -257,9 +259,9 @@ export function RichHistoryCard(props: Props) {
         </div>
         {!activeUpdateComment && (
           <div className={styles.runButton}>
-            <Button variant="secondary" onClick={onRunQuery} disabled={isRemoved}>
+            <Forms.Button variant="secondary" onClick={onRunQuery} disabled={isRemoved}>
               {datasourceInstance?.name === query.datasourceName ? 'Run query' : 'Switch data source and run query'}
-            </Button>
+            </Forms.Button>
           </div>
         )}
       </div>
