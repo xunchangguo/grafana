@@ -1,17 +1,7 @@
 import { ComponentType } from 'react';
-import {
-  MatcherConfig,
-  FieldConfig,
-  Field,
-  DataFrame,
-  VariableSuggestionsScope,
-  VariableSuggestion,
-  GrafanaTheme,
-  TimeZone,
-} from '../types';
+import { MatcherConfig, FieldConfig, Field, DataFrame, VariableSuggestionsScope, VariableSuggestion } from '../types';
 import { Registry, RegistryItem } from '../utils';
 import { InterpolateFunction } from './panel';
-import { StandardEditorProps } from '../field';
 
 export interface DynamicConfigValue {
   prop: string;
@@ -32,6 +22,13 @@ export interface FieldConfigSource {
   overrides: ConfigOverrideRule[];
 }
 
+export interface FieldConfigEditorProps<TValue, TSettings> {
+  item: FieldPropertyEditorItem<TValue, TSettings>; // The property info
+  value: TValue;
+  context: FieldOverrideContext;
+  onChange: (value?: TValue) => void;
+}
+
 export interface FieldOverrideContext {
   field?: Field;
   dataFrameIndex?: number; // The index for the selected field frame
@@ -40,23 +37,11 @@ export interface FieldOverrideContext {
   getSuggestions?: (scope?: VariableSuggestionsScope) => VariableSuggestion[];
 }
 
-export interface FieldConfigEditorProps<TValue, TSettings>
-  extends Omit<StandardEditorProps<TValue, TSettings>, 'item'> {
-  item: FieldPropertyEditorItem<TValue, TSettings>; // The property info
+export interface FieldOverrideEditorProps<TValue, TSettings> {
+  item: FieldPropertyEditorItem<TValue, TSettings>;
   value: TValue;
   context: FieldOverrideContext;
-  onChange: (value?: TValue) => void;
-}
-
-export interface FieldOverrideEditorProps<TValue, TSettings> extends Omit<StandardEditorProps<TValue>, 'item'> {
-  item: FieldPropertyEditorItem<TValue, TSettings>;
-  context: FieldOverrideContext;
-}
-
-export interface FieldConfigEditorConfig<TSettings = any, TValue = any>
-  extends Omit<Pick<FieldPropertyEditorItem<TValue, TSettings>, 'id' | 'description' | 'name'>, 'settings'> {
-  settings?: TSettings;
-  shouldApply?: (field: Field) => boolean;
+  onChange: (value?: any) => void;
 }
 
 export interface FieldPropertyEditorItem<TValue = any, TSettings = any> extends RegistryItem {
@@ -77,14 +62,3 @@ export interface FieldPropertyEditorItem<TValue = any, TSettings = any> extends 
 }
 
 export type FieldConfigEditorRegistry = Registry<FieldPropertyEditorItem>;
-
-export interface ApplyFieldOverrideOptions {
-  data?: DataFrame[];
-  fieldOptions: FieldConfigSource;
-  replaceVariables: InterpolateFunction;
-  theme: GrafanaTheme;
-  timeZone?: TimeZone;
-  autoMinMax?: boolean;
-  standard?: FieldConfigEditorRegistry;
-  custom?: FieldConfigEditorRegistry;
-}

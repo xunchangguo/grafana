@@ -4,7 +4,7 @@ import { toDataFrame } from '../dataframe/processDataFrame';
 import { ReducerID } from '../transformations/fieldReducer';
 import { ThresholdsMode } from '../types/thresholds';
 import { GrafanaTheme } from '../types/theme';
-import { FieldConfig, MappingType } from '../types';
+import { MappingType, FieldConfig } from '../types';
 import { validateFieldConfig } from './fieldOverrides';
 import { standardFieldConfigEditorRegistry } from './standardFieldConfigEditorRegistry';
 
@@ -19,6 +19,7 @@ describe('FieldDisplay', () => {
       shouldApply: () => true,
     } as any;
 
+    console.log('Init tegistry');
     standardFieldConfigEditorRegistry.setInit(() => {
       return [mappings];
     });
@@ -28,9 +29,7 @@ describe('FieldDisplay', () => {
     const options = createDisplayOptions({
       fieldOptions: {
         calcs: [ReducerID.first],
-      },
-      fieldConfig: {
-        overrides: [],
+        override: {},
         defaults: {
           title: '$__cell_0 * $__field_name * $__series_name',
         },
@@ -44,6 +43,8 @@ describe('FieldDisplay', () => {
     const options = createDisplayOptions({
       fieldOptions: {
         calcs: [ReducerID.last],
+        override: {},
+        defaults: {},
       },
     });
     const display = getFieldDisplayValues(options);
@@ -56,6 +57,8 @@ describe('FieldDisplay', () => {
         values: true, //
         limit: 1000,
         calcs: [],
+        override: {},
+        defaults: {},
       },
     });
     const display = getFieldDisplayValues(options);
@@ -68,6 +71,8 @@ describe('FieldDisplay', () => {
         values: true, //
         limit: 2,
         calcs: [],
+        override: {},
+        defaults: {},
       },
     });
     const display = getFieldDisplayValues(options);
@@ -97,7 +102,7 @@ describe('FieldDisplay', () => {
 
   it('Should return field thresholds when there is no data', () => {
     const options = createEmptyDisplayOptions({
-      fieldConfig: {
+      fieldOptions: {
         defaults: {
           thresholds: { steps: [{ color: '#F2495C', value: 50 }] },
         },
@@ -119,7 +124,7 @@ describe('FieldDisplay', () => {
   it('Should return field mapped value when there is no data', () => {
     const mapEmptyToText = '0';
     const options = createEmptyDisplayOptions({
-      fieldConfig: {
+      fieldOptions: {
         defaults: {
           mappings: [
             {
@@ -142,8 +147,8 @@ describe('FieldDisplay', () => {
   it('Should always return display numeric 0 when there is no data', () => {
     const mapEmptyToText = '0';
     const options = createEmptyDisplayOptions({
-      fieldConfig: {
-        overrides: {
+      fieldOptions: {
+        override: {
           mappings: [
             {
               id: 1,
@@ -163,58 +168,48 @@ describe('FieldDisplay', () => {
 
   describe('Value mapping', () => {
     it('should apply value mapping', () => {
-      const mappingConfig = [
-        {
-          id: 1,
-          operator: '',
-          text: 'Value mapped to text',
-          type: MappingType.ValueToText,
-          value: '1',
-        },
-      ];
       const options = createDisplayOptions({
         fieldOptions: {
           calcs: [ReducerID.first],
           override: {},
           defaults: {
-            mappings: mappingConfig,
+            mappings: [
+              {
+                id: 1,
+                operator: '',
+                text: 'Value mapped to text',
+                type: MappingType.ValueToText,
+                value: 1,
+              },
+            ],
           },
         },
       });
-
-      options.data![0].fields[1]!.config = { mappings: mappingConfig };
-      options.data![0].fields[2]!.config = { mappings: mappingConfig };
 
       const result = getFieldDisplayValues(options);
       expect(result[0].display.text).toEqual('Value mapped to text');
     });
     it('should apply range value mapping', () => {
       const mappedValue = 'Range mapped to text';
-      const mappingConfig = [
-        {
-          id: 1,
-          operator: '',
-          text: mappedValue,
-          type: MappingType.RangeToText,
-          value: 1,
-          from: '1',
-          to: '3',
-        },
-      ];
       const options = createDisplayOptions({
         fieldOptions: {
-          calcs: [ReducerID.first],
           values: true,
           override: {},
           defaults: {
-            mappings: mappingConfig,
+            mappings: [
+              {
+                id: 1,
+                operator: '',
+                text: mappedValue,
+                type: MappingType.RangeToText,
+                value: 1,
+                from: 1,
+                to: 3,
+              },
+            ],
           },
         },
       });
-
-      options.data![0].fields[1]!.config = { mappings: mappingConfig };
-      options.data![0].fields[2]!.config = { mappings: mappingConfig };
-
       const result = getFieldDisplayValues(options);
 
       expect(result[0].display.text).toEqual(mappedValue);
@@ -238,7 +233,7 @@ function createEmptyDisplayOptions(extend = {}): GetFieldDisplayValuesOptions {
   });
 }
 
-function createDisplayOptions(extend: Partial<GetFieldDisplayValuesOptions> = {}): GetFieldDisplayValuesOptions {
+function createDisplayOptions(extend = {}): GetFieldDisplayValuesOptions {
   const options: GetFieldDisplayValuesOptions = {
     data: [
       toDataFrame({
@@ -255,10 +250,8 @@ function createDisplayOptions(extend: Partial<GetFieldDisplayValuesOptions> = {}
     },
     fieldOptions: {
       calcs: [],
-    },
-    fieldConfig: {
-      overrides: [],
       defaults: {},
+      overrides: [],
     },
     theme: {} as GrafanaTheme,
   };

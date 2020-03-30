@@ -1,23 +1,21 @@
-import { addDashboard } from './addDashboard';
+import { login } from './login';
 import { addDataSource } from './addDataSource';
-import { addPanel } from './addPanel';
+import { deleteDataSource } from './deleteDataSource';
+import { addDashboard } from './addDashboard';
 import { assertSuccessNotification } from './assertSuccessNotification';
 import { deleteDashboard } from './deleteDashboard';
-import { deleteDataSource } from './deleteDataSource';
-import { login } from './login';
 import { openDashboard } from './openDashboard';
-import { saveDashboard } from './saveDashboard';
 import { saveNewDashboard } from './saveNewDashboard';
+import { saveDashboard } from './saveDashboard';
 
 export const Flows = {
-  addDashboard,
+  login,
   addDataSource,
-  addPanel,
+  deleteDataSource,
+  addDashboard,
   assertSuccessNotification,
   deleteDashboard,
-  deleteDataSource,
-  login,
   openDashboard,
-  saveDashboard,
   saveNewDashboard,
+  saveDashboard,
 };

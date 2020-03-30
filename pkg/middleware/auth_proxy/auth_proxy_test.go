@@ -1,6 +1,7 @@
 package authproxy
 
 import (
+	"encoding/base32"
 	"errors"
 	"fmt"
 	"net/http"
@@ -78,7 +79,7 @@ func TestMiddlewareContext(t *testing.T) {
 
 			Convey("with a simple cache key", func() {
 				// Set cache key
-				key := fmt.Sprintf(CachePrefix, HashCacheKey(name))
+				key := fmt.Sprintf(CachePrefix, base32.StdEncoding.EncodeToString([]byte(name)))
 				err := store.Set(key, int64(33), 0)
 				So(err, ShouldBeNil)
 
@@ -87,7 +88,7 @@ func TestMiddlewareContext(t *testing.T) {
 				id, err := auth.Login()
 				So(err, ShouldBeNil)
 
-				So(auth.getKey(), ShouldEqual, "auth-proxy-sync-ttl:0a7f3374e9659b10980fd66247b0cf2f")
+				So(auth.getKey(), ShouldEqual, "auth-proxy-sync-ttl:NVQXE23FNRXWO===")
 				So(id, ShouldEqual, 33)
 			})
 
@@ -96,7 +97,7 @@ func TestMiddlewareContext(t *testing.T) {
 				group := "grafana-core-team"
 				req.Header.Add("X-WEBAUTH-GROUPS", group)
 
-				key := fmt.Sprintf(CachePrefix, HashCacheKey(name+"-"+group))
+				key := fmt.Sprintf(CachePrefix, base32.StdEncoding.EncodeToString([]byte(name+"-"+group)))
 				err := store.Set(key, int64(33), 0)
 				So(err, ShouldBeNil)
 
@@ -104,7 +105,7 @@ func TestMiddlewareContext(t *testing.T) {
 
 				id, err := auth.Login()
 				So(err, ShouldBeNil)
-				So(auth.getKey(), ShouldEqual, "auth-proxy-sync-ttl:14f69b7023baa0ac98c96b31cec07bc0")
+				So(auth.getKey(), ShouldEqual, "auth-proxy-sync-ttl:NVQXE23FNRXWOLLHOJQWMYLOMEWWG33SMUWXIZLBNU======")
 				So(id, ShouldEqual, 33)
 			})
 

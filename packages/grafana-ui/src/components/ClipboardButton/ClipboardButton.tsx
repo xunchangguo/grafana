@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import Clipboard from 'clipboard';
-import { Button, ButtonProps } from '../Button';
+import { Button, ButtonProps } from '../Button/Button';
 
 interface Props extends ButtonProps {
   getText(): string;

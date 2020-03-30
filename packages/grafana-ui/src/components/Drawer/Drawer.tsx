@@ -34,7 +34,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme, scollableContent: boolean)
   return {
     drawer: css`
       .drawer-content {
-        background-color: ${theme.colors.pageBg};
+        background-color: ${theme.colors.bodyBg};
         display: flex;
         flex-direction: column;
         overflow: hidden;

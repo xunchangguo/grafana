@@ -1,24 +1,23 @@
 import {
+  applyFieldOverrides,
   FieldConfig,
   FieldConfigSource,
   InterpolateFunction,
   GrafanaTheme,
   FieldMatcherID,
+  FieldDisplayOptions,
   MutableDataFrame,
   DataFrame,
-  FieldType,
-  applyFieldOverrides,
   toDataFrame,
   standardFieldConfigEditorRegistry,
-  standardEditorsRegistry,
+  FieldType,
 } from '@grafana/data';
 
 import { getTheme } from '../../themes';
-import { getStandardFieldConfigs, getStandardOptionEditors } from '../../utils';
+import { getStandardFieldConfigs } from './standardFieldConfigEditors';
 
 describe('FieldOverrides', () => {
   beforeAll(() => {
-    standardEditorsRegistry.setInit(getStandardOptionEditors);
     standardFieldConfigEditorRegistry.setInit(getStandardFieldConfigs);
   });
 
@@ -83,7 +82,7 @@ describe('FieldOverrides', () => {
   it('will apply field overrides', () => {
     const data = applyFieldOverrides({
       data: [f0], // the frame
-      fieldOptions: src as FieldConfigSource, // defaults + overrides
+      fieldOptions: src as FieldDisplayOptions, // defaults + overrides
       replaceVariables: (undefined as any) as InterpolateFunction,
       theme: (undefined as any) as GrafanaTheme,
     })[0];
@@ -109,7 +108,7 @@ describe('FieldOverrides', () => {
   it('will apply set min/max when asked', () => {
     const data = applyFieldOverrides({
       data: [f0], // the frame
-      fieldOptions: src as FieldConfigSource, // defaults + overrides
+      fieldOptions: src as FieldDisplayOptions, // defaults + overrides
       replaceVariables: (undefined as any) as InterpolateFunction,
       theme: (undefined as any) as GrafanaTheme,
       autoMinMax: true,

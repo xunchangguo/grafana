@@ -12,7 +12,6 @@ module.exports = async baseConfig => {
 
   if (CWD) {
     const projectConfig = {
-      fixturesFolder: `${CWD}/cypress/fixtures`,
       integrationFolder: `${CWD}/cypress/integration`,
       screenshotsFolder: `${CWD}/cypress/screenshots`,
       videosFolder: `${CWD}/cypress/videos`,

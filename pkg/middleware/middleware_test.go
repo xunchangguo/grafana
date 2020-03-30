@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"encoding/base32"
 	"errors"
 	"fmt"
 	"net/http"
@@ -363,7 +364,7 @@ func TestMiddlewareContext(t *testing.T) {
 					return nil
 				})
 
-				key := fmt.Sprintf(authproxy.CachePrefix, authproxy.HashCacheKey(name+"-"+group))
+				key := fmt.Sprintf(authproxy.CachePrefix, base32.StdEncoding.EncodeToString([]byte(name+"-"+group)))
 				err := sc.remoteCacheService.Set(key, int64(33), 0)
 				So(err, ShouldBeNil)
 				sc.fakeReq("GET", "/")

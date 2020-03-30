@@ -1,5 +1,7 @@
+enable:
+
 run:
-  timeout: 10m
+  deadline: 10m
 
 linters:
   disable-all: true
@@ -7,6 +9,7 @@ linters:
     - deadcode
     - gofmt
     - gosimple
+    - govet
     - ineffassign
     - structcheck
     - typecheck
@@ -17,9 +20,6 @@ linters:
     - staticcheck
     - errcheck
 
-linters-settings:
+linter-settings:
   goconst:
-    # minimal length of string constant, 3 by default
-    min-len: 5
-    # minimal occurrences count to trigger, 3 by default
-    min-occurrences: 5
+    ignore-tests: true

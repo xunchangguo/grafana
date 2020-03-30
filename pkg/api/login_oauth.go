@@ -218,11 +218,7 @@ func (hs *HTTPServer) OAuthLogin(ctx *models.ReqContext) {
 	}
 
 	// login
-	err = hs.loginUserWithUser(cmd.Result, ctx)
-	if err != nil {
-		hs.redirectWithError(ctx, err)
-		return
-	}
+	hs.loginUserWithUser(cmd.Result, ctx)
 
 	metrics.MApiLoginOAuth.Inc()
 

@@ -52,6 +52,10 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
           .setAlpha(0.7)
           .toRgbString()};
     `,
+    whiteSpacePreWrap: css`
+      label: whiteSpacePreWrap;
+      white-space: pre-wrap;
+    `,
     horizontalScroll: css`
       label: verticalScroll;
       white-space: nowrap;
@@ -89,11 +93,6 @@ class UnThemedLogRowMessage extends PureComponent<Props> {
       ? cx([style.logsRowMatchHighLight, style.logsRowMatchHighLightPreview])
       : cx([style.logsRowMatchHighLight]);
     const styles = getStyles(theme);
-    const whiteSpacePreWrap = {
-      label: 'white-space-pre-wrap',
-      whiteSpace: 'pre-wrap',
-    };
-
     return (
       <td className={style.logsRowMessage}>
         <div className={cx(styles.positionRelative, { [styles.horizontalScroll]: !wrapLogMessage })}>
@@ -114,7 +113,7 @@ class UnThemedLogRowMessage extends PureComponent<Props> {
           <span className={cx(styles.positionRelative, { [styles.rowWithContext]: showContext })}>
             {needsHighlighter ? (
               <Highlighter
-                style={whiteSpacePreWrap}
+                style={styles.whiteSpacePreWrap}
                 textToHighlight={entry}
                 searchWords={highlights}
                 findChunks={findHighlightChunksInText}

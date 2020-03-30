@@ -1,35 +1,45 @@
-import React from 'react';
-import { select, text } from '@storybook/addon-knobs';
-import { Button, ButtonVariant } from './Button';
-import { withCenteredStory, withHorizontallyCenteredStory } from '../../utils/storybook/withCenteredStory';
+import { storiesOf } from '@storybook/react';
+import { Button, LinkButton } from './Button';
+// @ts-ignore
+import withPropsCombinations from 'react-storybook-addon-props-combinations';
+import { action } from '@storybook/addon-actions';
+import { ThemeableCombinationsRowRenderer } from '../../utils/storybook/CombinationsRowRenderer';
+import { boolean } from '@storybook/addon-knobs';
 import { getIconKnob } from '../../utils/storybook/knobs';
-import mdx from './Button.mdx';
-import { ComponentSize } from '../../types/size';
 
-export default {
-  title: 'Forms/Button',
-  component: Button,
-  decorators: [withCenteredStory, withHorizontallyCenteredStory],
-  parameters: {
-    docs: {
-      page: mdx,
-    },
-  },
+const ButtonStories = storiesOf('General/Button', module);
+
+const defaultProps = {
+  onClick: [action('Button clicked')],
+  children: ['Click click!'],
 };
 
-const variants = ['primary', 'secondary', 'destructive', 'link'];
+const variants = {
+  size: ['xs', 'sm', 'md', 'lg'],
+  variant: ['primary', 'secondary', 'danger', 'inverse', 'transparent', 'link'],
+};
+const combinationOptions = {
+  CombinationRenderer: ThemeableCombinationsRowRenderer,
+};
 
-const sizes = ['sm', 'md', 'lg'];
+const renderButtonStory = (buttonComponent: typeof Button | typeof LinkButton) => {
+  const isDisabled = boolean('Disable button', false);
+  return withPropsCombinations(
+    buttonComponent,
+    { ...variants, ...defaultProps, disabled: [isDisabled] },
+    combinationOptions
+  )();
+};
 
-export const simple = () => {
-  const variant = select('Variant', variants, 'primary');
-  const size = select('Size', sizes, 'md');
-  const buttonText = text('text', 'Button');
+ButtonStories.add('as button element', () => renderButtonStory(Button));
+
+ButtonStories.add('as link element', () => renderButtonStory(LinkButton));
+
+ButtonStories.add('with icon', () => {
   const icon = getIconKnob();
-
-  return (
-    <Button variant={variant as ButtonVariant} size={size as ComponentSize} icon={icon && `fa fa-${icon}`}>
-      {buttonText}
-    </Button>
-  );
-};
+  return withPropsCombinations(
+    Button,
+    { ...variants, ...defaultProps, icon: [icon && `fa fa-${icon}`] },
+    combinationOptions
+  )();
+});

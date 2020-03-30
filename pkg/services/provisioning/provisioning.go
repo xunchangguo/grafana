@@ -15,17 +15,18 @@ import (
 	"github.com/grafana/grafana/pkg/setting"
 )
 
-type ProvisioningService interface {
-	ProvisionDatasources() error
-	ProvisionNotifications() error
-	ProvisionDashboards() error
-	GetDashboardProvisionerResolvedPath(name string) string
+type DashboardProvisioner interface {
+	Provision() error
+	PollChanges(ctx context.Context)
+	GetProvisionerResolvedPath(name string) string
 	GetAllowUiUpdatesFromConfig(name string) bool
 }
 
+type DashboardProvisionerFactory func(string) (DashboardProvisioner, error)
+
 func init() {
 	registry.RegisterService(NewProvisioningServiceImpl(
-		func(path string) (dashboards.DashboardProvisioner, error) {
+		func(path string) (DashboardProvisioner, error) {
 			return dashboards.NewDashboardProvisionerImpl(path)
 		},
 		notifiers.Provision,
@@ -34,7 +35,7 @@ func init() {
 }
 
 func NewProvisioningServiceImpl(
-	newDashboardProvisioner dashboards.DashboardProvisionerFactory,
+	newDashboardProvisioner DashboardProvisionerFactory,
 	provisionNotifiers func(string) error,
 	provisionDatasources func(string) error,
 ) *provisioningServiceImpl {
@@ -50,8 +51,8 @@ type provisioningServiceImpl struct {
 	Cfg                     *setting.Cfg `inject:""`
 	log                     log.Logger
 	pollingCtxCancel        context.CancelFunc
-	newDashboardProvisioner dashboards.DashboardProvisionerFactory
-	dashboardProvisioner    dashboards.DashboardProvisioner
+	newDashboardProvisioner DashboardProvisionerFactory
+	dashboardProvisioner    DashboardProvisioner
 	provisionNotifiers      func(string) error
 	provisionDatasources    func(string) error
 	mutex                   sync.Mutex

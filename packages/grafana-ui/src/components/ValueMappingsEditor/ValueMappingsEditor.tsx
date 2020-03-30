@@ -1,75 +1,108 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+
+import MappingRow from './MappingRow';
 import { MappingType, ValueMapping } from '@grafana/data';
 import { Button } from '../Button/Button';
-import { FullWidthButtonContainer } from '../Button/FullWidthButtonContainer';
-import { MappingRow } from './MappingRow';
+import { PanelOptionsGroup } from '../PanelOptionsGroup/PanelOptionsGroup';
 
 export interface Props {
   valueMappings?: ValueMapping[];
   onChange: (valueMappings: ValueMapping[]) => void;
 }
 
-export const ValueMappingsEditor: React.FC<Props> = ({ valueMappings, onChange, children }) => {
-  const onAdd = () => {
-    let update = valueMappings;
-    const defaultMapping = {
-      type: MappingType.ValueToText,
-      from: '',
-      to: '',
-      operator: '',
-      text: '',
+interface State {
+  valueMappings: ValueMapping[];
+  nextIdToAdd: number;
+}
+
+export class ValueMappingsEditor extends PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    const mappings = props.valueMappings || [];
+
+    this.state = {
+      valueMappings: mappings,
+      nextIdToAdd: mappings.length > 0 ? this.getMaxIdFromValueMappings(mappings) : 1,
     };
-    const id = update && update.length > 0 ? Math.max(...update.map(v => v.id)) + 1 : 0;
+  }
 
-    if (update) {
-      update.push({
-        id,
-        ...defaultMapping,
-      });
-    } else {
-      update = [
+  getMaxIdFromValueMappings(mappings: ValueMapping[]) {
+    return (
+      Math.max.apply(
+        null,
+        mappings.map(mapping => mapping.id).map(m => m)
+      ) + 1
+    );
+  }
+
+  onAddMapping = () =>
+    this.setState(prevState => ({
+      valueMappings: [
+        ...prevState.valueMappings,
         {
-          id,
-          ...defaultMapping,
+          id: prevState.nextIdToAdd,
+          operator: '',
+          value: '',
+          text: '',
+          type: MappingType.ValueToText,
+          from: '',
+          to: '',
         },
-      ];
-    }
+      ],
+      nextIdToAdd: prevState.nextIdToAdd + 1,
+    }));
 
-    onChange(update);
+  onRemoveMapping = (id: number) => {
+    this.setState(
+      prevState => ({
+        valueMappings: prevState.valueMappings.filter(m => {
+          return m.id !== id;
+        }),
+      }),
+      () => {
+        this.props.onChange(this.state.valueMappings);
+      }
+    );
   };
 
-  const onRemove = (index: number) => {
-    const update = valueMappings;
-    update!.splice(index, 1);
-    onChange(update!);
+  updateGauge = (mapping: ValueMapping) => {
+    this.setState(
+      prevState => ({
+        valueMappings: prevState.valueMappings.map(m => {
+          if (m.id === mapping.id) {
+            return { ...mapping };
+          }
+
+          return m;
+        }),
+      }),
+      () => {
+        this.props.onChange(this.state.valueMappings);
+      }
+    );
   };
 
-  const onMappingChange = (index: number, value: ValueMapping) => {
-    const update = valueMappings;
-    update![index] = value;
-    onChange(update!);
-  };
+  render() {
+    const { valueMappings } = this.state;
 
-  return (
-    <>
-      {valueMappings && valueMappings.length > 0 && (
-        <>
+    return (
+      <PanelOptionsGroup title="Value mappings">
+        <div>
           {valueMappings.length > 0 &&
             valueMappings.map((valueMapping, index) => (
               <MappingRow
                 key={`${valueMapping.text}-${index}`}
                 valueMapping={valueMapping}
-                updateValueMapping={value => onMappingChange(index, value)}
-                removeValueMapping={() => onRemove(index)}
+                updateValueMapping={this.updateGauge}
+                removeValueMapping={() => this.onRemoveMapping(valueMapping.id)}
               />
             ))}
-        </>
-      )}
-      <FullWidthButtonContainer>
-        <Button size="sm" icon="fa fa-plus" onClick={onAdd} aria-label="ValueMappingsEditor add mapping button">
-          Add mapping
-        </Button>
-      </FullWidthButtonContainer>
-    </>
-  );
-};
+          <Button variant="inverse" icon="fa fa-plus" onClick={this.onAddMapping}>
+            Add mapping
+          </Button>
+        </div>
+      </PanelOptionsGroup>
+    );
+  }
+}

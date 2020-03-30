@@ -1,5 +1,5 @@
 import { Selector } from './selector';
-import { fromBaseUrl } from './url';
+import { Url } from './url';
 import { e2e } from '../index';
 import { SelectorFunction, SelectorObject } from '../noTypeCheck';
 
@@ -19,11 +19,11 @@ export const pageFactory = <S extends Selectors>({ url, selectors }: PageFactory
 
     let parsedUrl = '';
     if (typeof url === 'string') {
-      parsedUrl = fromBaseUrl(url);
+      parsedUrl = Url.fromBaseUrl(url);
     }
 
     if (typeof url === 'function' && args) {
-      parsedUrl = fromBaseUrl(url(args));
+      parsedUrl = Url.fromBaseUrl(url(args));
     }
 
     e2e().logToConsole('Visiting', parsedUrl);

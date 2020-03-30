@@ -18,11 +18,10 @@ export interface Props {
   height: number;
   /** Minimal column width specified in pixels */
   columnMinWidth?: number;
-  noHeader?: boolean;
   onCellClick?: TableFilterActionCallback;
 }
 
-export const Table: FC<Props> = memo(({ data, height, onCellClick, width, columnMinWidth, noHeader }) => {
+export const Table: FC<Props> = memo(({ data, height, onCellClick, width, columnMinWidth }) => {
   const theme = useTheme();
   const [ref, headerRowMeasurements] = useMeasure();
   const tableStyles = getTableStyles(theme);
@@ -68,17 +67,15 @@ export const Table: FC<Props> = memo(({ data, height, onCellClick, width, column
   return (
     <div {...getTableProps()} className={tableStyles.table}>
       <CustomScrollbar>
-        {!noHeader && (
-          <div>
-            {headerGroups.map((headerGroup: any) => (
-              <div className={tableStyles.thead} {...headerGroup.getHeaderGroupProps()} ref={ref}>
-                {headerGroup.headers.map((column: any) =>
-                  renderHeaderCell(column, tableStyles.headerCell, data.fields[column.index])
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <div>
+          {headerGroups.map((headerGroup: any) => (
+            <div className={tableStyles.thead} {...headerGroup.getHeaderGroupProps()} ref={ref}>
+              {headerGroup.headers.map((column: any) =>
+                renderHeaderCell(column, tableStyles.headerCell, data.fields[column.index])
+              )}
+            </div>
+          ))}
+        </div>
         <FixedSizeList
           height={height - headerRowMeasurements.height}
           itemCount={rows.length}

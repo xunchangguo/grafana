@@ -48,7 +48,7 @@ const darkTheme: GrafanaTheme = {
   name: 'Grafana Dark',
   colors: {
     ...basicColors,
-    inputBlack: basicColors.gray05,
+    inputBlack: '#09090b',
     brandPrimary: basicColors.orange,
     brandSuccess: basicColors.greenBase,
     brandWarning: basicColors.orange,
@@ -61,8 +61,8 @@ const darkTheme: GrafanaTheme = {
     online: basicColors.greenBase,
     warn: '#f79520',
     critical: basicColors.redBase,
-    bodyBg: basicColors.gray05,
-    pageBg: basicColors.gray10,
+    bodyBg: basicColors.dark2,
+    pageBg: basicColors.dark2,
     body: basicColors.gray4,
     text: basicColors.gray4,
     textStrong: basicColors.white,
@@ -74,9 +74,8 @@ const darkTheme: GrafanaTheme = {
     linkHover: basicColors.white,
     linkExternal: basicColors.blue,
     headingColor: basicColors.gray4,
-    pageHeaderBorder: basicColors.gray15,
-    panelBg: basicColors.gray10,
-    panelBorder: basicColors.gray15,
+    pageHeaderBorder: basicColors.dark9,
+    panelBg: basicColors.dark4,
 
     // Next-gen forms functional colors
     formLabel: basicColors.gray70,

@@ -198,6 +198,10 @@ describe('DashboardPage', () => {
     it('should render settings view', () => {
       expect(ctx.wrapper).toMatchSnapshot();
     });
+
+    it('should set animation state', () => {
+      expect(ctx.wrapper?.state().isSettingsOpening).toBe(true);
+    });
   });
 
   dashboardPageScenario('When adding panel', ctx => {

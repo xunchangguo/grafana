@@ -61,6 +61,9 @@ const copyFiles = () => {
     'src/config/eslint.plugin.json',
     'src/config/styles.mock.js',
     'src/config/jest.plugin.config.local.js',
+
+    // plugin test file
+    'src/plugins/e2e/commonPluginTests.ts',
   ];
   // @ts-ignore
   return useSpinner<void>(`Moving ${files.join(', ')} files`, async () => {

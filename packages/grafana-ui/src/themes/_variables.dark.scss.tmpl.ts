@@ -22,17 +22,6 @@ $green-base: ${theme.colors.greenBase};
 $green-shade: ${theme.colors.greenShade};
 $orange-dark: ${theme.colors.orangeDark};
 
-$gray98: ${theme.colors.gray98};
-$gray95: ${theme.colors.gray95};
-$gray85: ${theme.colors.gray85};
-$gray70: ${theme.colors.gray70};
-$gray60: ${theme.colors.gray60};
-$gray33: ${theme.colors.gray33};
-$gray25: ${theme.colors.gray25};
-$gray15: ${theme.colors.gray15};
-$gray10: ${theme.colors.gray10};
-$gray05: ${theme.colors.gray05};
-
 // Grays
 // -------------------------
 $black: ${theme.colors.black};
@@ -102,6 +91,8 @@ $textShadow: none;
 // gradients
 $brand-gradient-horizontal: linear-gradient(to right, #f05a28 30%, #fbca0a 99%);
 $brand-gradient-vertical: linear-gradient(#f05a28 30%, #fbca0a 99%);
+$page-gradient: linear-gradient(180deg, $dark-5 10px, $dark-2 100px);
+$edit-gradient: linear-gradient(180deg, $dark-2 50%, $input-black);
 
 // Links
 // -------------------------
@@ -121,12 +112,12 @@ $hr-border-color: $dark-9;
 // Panel
 // -------------------------
 $panel-bg: ${theme.colors.panelBg};
-$panel-border: 1px solid ${theme.colors.panelBorder};
-$panel-header-hover-bg: ${theme.colors.gray15};
+$panel-border: solid 1px $dark-1;
+$panel-header-hover-bg: $dark-9;
 $panel-corner: $panel-bg;
 
 // page header
-$page-header-bg: ${theme.colors.gray15};
+$page-header-bg: linear-gradient(90deg, $dark-7, $black);
 $page-header-shadow: inset 0px -4px 14px $dark-3;
 $page-header-border-color: $dark-9;
 
@@ -141,8 +132,8 @@ $code-tag-bg: $dark-1;
 $code-tag-border: $dark-9;
 
 // cards
-$card-background: linear-gradient(135deg, $dark-4, $dark-3);
-$card-background-hover: linear-gradient(135deg, $dark-5, $dark-6);
+$card-background: linear-gradient(135deg, $dark-8, $dark-6);
+$card-background-hover: linear-gradient(135deg, $dark-9, $dark-6);
 $card-shadow: -1px -1px 0 0 hsla(0, 0%, 100%, 0.1), 1px 1px 0 0 rgba(0, 0, 0, 0.3);
 
 // Lists
@@ -168,11 +159,11 @@ $table-bg-hover: $dark-6;
 
 // Buttons
 // -------------------------
-$btn-primary-bg: $blue-base;
-$btn-primary-bg-hl: $blue-shade;
+$btn-secondary-bg: $blue-base;
+$btn-secondary-bg-hl: $blue-shade;
 
-$btn-secondary-bg: $dark-6;
-$btn-secondary-bg-hl: lighten($dark-6, 4%);
+$btn-primary-bg: $green-base;
+$btn-primary-bg-hl: $green-shade;
 
 $btn-success-bg: $green-base;
 $btn-success-bg-hl: $green-shade;
@@ -218,6 +209,7 @@ $placeholderText: darken($text-color, 25%);
 
 // Search
 $search-shadow: 0 0 30px 0 $black;
+$search-filter-box-bg: $gray-blue;
 
 // Typeahead
 $typeahead-shadow: 0 5px 10px 0 $black;
@@ -226,10 +218,10 @@ $typeahead-selected-color: $yellow;
 
 // Dropdowns
 // -------------------------
-$dropdownBackground: $panel-bg;
-$dropdownBorder: ${theme.colors.panelBorder};
+$dropdownBackground: $dark-6;
+$dropdownBorder: rgba(0, 0, 0, 0.2);
 $dropdownDividerTop: transparent;
-$dropdownDividerBottom: ${theme.colors.gray25};
+$dropdownDividerBottom: #444;
 
 $dropdownLinkColor: $text-color;
 $dropdownLinkColorHover: $white;
@@ -244,23 +236,26 @@ $horizontalComponentOffset: 180px;
 // Navbar
 // -------------------------
 $navbarHeight: 55px;
+
+$navbarBackground: $panel-bg;
 $navbarBorder: 1px solid $dark-6;
 
-$navbarButtonBackground: $panel-bg;
+$navbarButtonBackground: $navbarBackground;
+$navbarButtonBackgroundHighlight: $body-bg;
+
 $navbar-button-border: #2f2f32;
 
 // Sidemenu
 // -------------------------
-$side-menu-bg: $panel-bg;
-$side-menu-bg-mobile: $panel-bg;
-$side-menu-border: none;
+$side-menu-bg: $black;
+$side-menu-bg-mobile: $side-menu-bg;
 $side-menu-item-hover-bg: $dark-3;
 $side-menu-shadow: 0 0 20px black;
 $side-menu-link-color: $link-color;
 
 // Menu dropdowns
 // -------------------------
-$menu-dropdown-bg: $panel-bg;
+$menu-dropdown-bg: $body-bg;
 $menu-dropdown-hover-bg: $dark-3;
 $menu-dropdown-shadow: 5px 5px 20px -5px $black;
 

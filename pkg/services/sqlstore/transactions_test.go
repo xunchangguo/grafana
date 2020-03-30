@@ -15,7 +15,7 @@ var ErrProvokedError = errors.New("testing error")
 func TestTransaction(t *testing.T) {
 	ss := InitTestDB(t)
 
-	Convey("InTransaction", t, func() {
+	Convey("InTransaction asdf asdf", t, func() {
 		cmd := &models.AddApiKeyCommand{Key: "secret-key", Name: "key", OrgId: 1}
 
 		err := AddApiKey(cmd)

@@ -2,7 +2,7 @@ import { DataFrame, DataLink, VariableSuggestion } from '@grafana/data';
 import React, { FC, useState } from 'react';
 import { DataLinkEditor } from '../DataLinkEditor';
 import { HorizontalGroup } from '../../Layout/Layout';
-import { Button } from '../../Button';
+import Forms from '../../Forms';
 
 interface DataLinkEditorModalContentProps {
   link: DataLink;
@@ -34,17 +34,17 @@ export const DataLinkEditorModalContent: FC<DataLinkEditorModalContentProps> = (
         onRemove={() => {}}
       />
       <HorizontalGroup>
-        <Button
+        <Forms.Button
           onClick={() => {
             onChange(index, dirtyLink);
             onClose();
           }}
         >
           Save
-        </Button>
-        <Button variant="secondary" onClick={() => onClose()}>
+        </Forms.Button>
+        <Forms.Button variant="secondary" onClick={() => onClose()}>
           Cancel
-        </Button>
+        </Forms.Button>
       </HorizontalGroup>
     </>
   );

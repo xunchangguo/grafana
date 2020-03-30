@@ -1,6 +1,6 @@
 import { css } from 'emotion';
 import { GrafanaTheme } from '@grafana/data';
-import { ComponentSize } from '../../types/size';
+import { ButtonSize } from '../Button/types';
 
 export const getFocusCss = (theme: GrafanaTheme) => `
   outline: 2px dotted transparent;
@@ -90,7 +90,7 @@ export const inputSizesPixels = (size: string) => {
   }
 };
 
-export const getPropertiesForButtonSize = (theme: GrafanaTheme, size: ComponentSize) => {
+export const getPropertiesForButtonSize = (theme: GrafanaTheme, size: ButtonSize) => {
   switch (size) {
     case 'sm':
       return {

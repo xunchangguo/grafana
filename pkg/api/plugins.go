@@ -58,11 +58,6 @@ func (hs *HTTPServer) GetPluginList(c *models.ReqContext) Response {
 	embeddedFilter := c.Query("embedded")
 	coreFilter := c.Query("core")
 
-	// For users with viewer role we only return core plugins
-	if !c.HasRole(models.ROLE_ADMIN) {
-		coreFilter = "1"
-	}
-
 	pluginSettingsMap, err := plugins.GetPluginSettings(c.OrgId)
 
 	if err != nil {
@@ -77,7 +72,7 @@ func (hs *HTTPServer) GetPluginList(c *models.ReqContext) Response {
 		}
 
 		// filter out core plugins
-		if (coreFilter == "0" && pluginDef.IsCorePlugin) || (coreFilter == "1" && !pluginDef.IsCorePlugin) {
+		if coreFilter == "0" && pluginDef.IsCorePlugin {
 			continue
 		}
 

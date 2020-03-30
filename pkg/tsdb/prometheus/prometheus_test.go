@@ -28,7 +28,7 @@ func TestPrometheus(t *testing.T) {
 				LegendFormat: "legend {{app}} {{ device }} {{broken}}",
 			}
 
-			So(formatLegend(metric, query), ShouldEqual, "legend backend mobile ")
+			So(formatLegend(metric, query), ShouldEqual, "legend backend mobile {{broken}}")
 		})
 
 		Convey("build full serie name", func() {

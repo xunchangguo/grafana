@@ -1,13 +1,11 @@
-import { ComponentType } from 'react';
+import { ComponentClass, ComponentType } from 'react';
 import { DataQueryError, DataQueryRequest, DataQueryTimings } from './datasource';
-import { PluginMeta } from './plugin';
+import { GrafanaPlugin, PluginMeta } from './plugin';
 import { ScopedVars } from './ScopedVars';
 import { LoadingState } from './data';
 import { DataFrame } from './dataFrame';
 import { AbsoluteTimeRange, TimeRange, TimeZone } from './time';
-import { FieldConfigSource } from './fieldOverrides';
-import { Registry, RegistryItem } from '../utils';
-import { StandardEditorProps } from '../field';
+import { FieldConfigEditorRegistry } from './fieldOverrides';
 
 export type InterpolateFunction = (value: string, scopedVars?: ScopedVars, format?: string | Function) => string;
 
@@ -18,34 +16,12 @@ export interface PanelPluginMeta extends PluginMeta {
 }
 
 export interface PanelData {
-  /**
-   * State of the data (loading, done, error, streaming)
-   */
   state: LoadingState;
-
-  /**
-   * Contains data frames with field overrides applied
-   */
   series: DataFrame[];
-
-  /**
-   * Request contains the queries and properties sent to the datasource
-   */
   request?: DataQueryRequest;
-
-  /**
-   * Timing measurements
-   */
   timings?: DataQueryTimings;
-
-  /**
-   * Any query errors
-   */
   error?: DataQueryError;
-
-  /**
-   *  Contains the range from the request or a shifted time range if a request uses relative time
-   */
+  // Contains the range from the request or a shifted time range if a request uses relative time
   timeRange: TimeRange;
 }
 
@@ -56,10 +32,6 @@ export interface PanelProps<T = any> {
   timeZone: TimeZone;
   options: T;
   onOptionsChange: (options: T) => void;
-  /** Panel fields configuration */
-  fieldConfig: FieldConfigSource;
-  /** Enables panel field config manipulation */
-  onFieldConfigChange: (config: FieldConfigSource) => void;
   renderCounter: number;
   transparent: boolean;
   width: number;
@@ -76,23 +48,11 @@ export interface PanelEditorProps<T = any> {
     callback?: () => void
   ) => void;
   data: PanelData;
-
-  /**
-   * Panel fields configuration - temporart solution
-   * TODO[FieldConfig]: Remove when we switch old editor to new
-   */
-  fieldConfig: FieldConfigSource;
-  /**
-   * Enables panel field config manipulation
-   * TODO[FieldConfig]: Remove when we switch old editor to new
-   */
-  onFieldConfigChange: (config: FieldConfigSource) => void;
 }
 
 export interface PanelModel<TOptions = any> {
   id: number;
   options: TOptions;
-  fieldConfig: FieldConfigSource;
   pluginVersion?: string;
   scopedVars?: ScopedVars;
 }
@@ -103,25 +63,73 @@ export interface PanelModel<TOptions = any> {
 export type PanelMigrationHandler<TOptions = any> = (panel: PanelModel<TOptions>) => Partial<TOptions>;
 
 /**
- * Called before a panel is initialized. Allows panel inspection for any updates before changing the panel type.
+ * Called before a panel is initialized
  */
 export type PanelTypeChangedHandler<TOptions = any> = (
-  panel: PanelModel<TOptions>,
+  options: Partial<TOptions>,
   prevPluginId: string,
   prevOptions: any
 ) => Partial<TOptions>;
 
-export type PanelOptionEditorsRegistry = Registry<PanelOptionsEditorItem>;
+export class PanelPlugin<TOptions = any> extends GrafanaPlugin<PanelPluginMeta> {
+  panel: ComponentType<PanelProps<TOptions>>;
+  editor?: ComponentClass<PanelEditorProps<TOptions>>;
+  customFieldConfigs?: FieldConfigEditorRegistry;
+  defaults?: TOptions;
+  onPanelMigration?: PanelMigrationHandler<TOptions>;
+  onPanelTypeChanged?: PanelTypeChangedHandler<TOptions>;
+  noPadding?: boolean;
 
-export interface PanelOptionsEditorProps<TValue> extends StandardEditorProps<TValue> {}
+  /**
+   * Legacy angular ctrl.  If this exists it will be used instead of the panel
+   */
+  angularPanelCtrl?: any;
 
-export interface PanelOptionsEditorItem<TValue = any, TSettings = any> extends RegistryItem {
-  editor: ComponentType<PanelOptionsEditorProps<TValue>>;
-  settings?: TSettings;
+  constructor(panel: ComponentType<PanelProps<TOptions>>) {
+    super();
+    this.panel = panel;
+  }
+
+  setEditor(editor: ComponentClass<PanelEditorProps<TOptions>>) {
+    this.editor = editor;
+    return this;
+  }
+
+  setDefaults(defaults: TOptions) {
+    this.defaults = defaults;
+    return this;
+  }
+
+  setNoPadding() {
+    this.noPadding = true;
+    return this;
+  }
+
+  /**
+   * This function is called before the panel first loads if
+   * the current version is different than the version that was saved.
+   *
+   * This is a good place to support any changes to the options model
+   */
+  setMigrationHandler(handler: PanelMigrationHandler) {
+    this.onPanelMigration = handler;
+    return this;
+  }
+
+  /**
+   * This function is called when the visualization was changed.  This
+   * passes in the options that were used in the previous visualization
+   */
+  setPanelChangeHandler(handler: PanelTypeChangedHandler) {
+    this.onPanelTypeChanged = handler;
+    return this;
+  }
+
+  setCustomFieldConfigs(registry: FieldConfigEditorRegistry) {
+    this.customFieldConfigs = registry;
+    return this;
+  }
 }
-
-export interface PanelOptionsEditorConfig<TSettings = any, TValue = any>
-  extends Pick<PanelOptionsEditorItem<TValue, TSettings>, 'id' | 'description' | 'name' | 'settings'> {}
 
 export interface PanelMenuItem {
   type?: 'submenu' | 'divider';

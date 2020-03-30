@@ -77,8 +77,6 @@
     link: /administration/metrics/
   - name: Provisioning
     link: /administration/provisioning/
-  - name: Set up Grafana for high availability
-    link: /tutorials/ha_setup/
   - name: Troubleshooting
     link: /installation/troubleshooting/
 - name: Features
@@ -145,7 +143,7 @@
   - name: Data sources
     link: /features/datasources/
     children:
-    - link: /features/datasources/add-a-data-source/
+    - link: /features/datasources/add-data-source/
       name: Add data source
     - link: /features/datasources/cloudwatch/
       name: AWS Cloudwatch
@@ -194,7 +192,7 @@
     link: /features/reporting/
   - name: Navigation links
     link: /features/navigation-links/
-- name: What's new in Grafana
+- name: What's new In Grafana
   link: /whatsnew/
   children:
   - name: Version 6.7
@@ -213,19 +211,19 @@
     link: /guides/whats-new-in-v6-1/
   - name: Version 6.0
     link: /guides/whats-new-in-v6-0/
+  - name: Version 5.4
+    link: /guides/whats-new-in-v5-4/
+  - name: Version 5.3
+    link: /guides/whats-new-in-v5-3/
+  - name: Version 5.2
+    link: /guides/whats-new-in-v5-2/
+  - name: Version 5.1
+    link: /guides/whats-new-in-v5-1/
+  - name: Version 5.0
+    link: /guides/whats-new-in-v5/
   - name: Old versions
     link: /whatsnew/
     children:
-    - name: Version 5.4
-      link: /guides/whats-new-in-v5-4/
-    - name: Version 5.3
-      link: /guides/whats-new-in-v5-3/
-    - name: Version 5.2
-      link: /guides/whats-new-in-v5-2/
-    - name: Version 5.1
-      link: /guides/whats-new-in-v5-1/
-    - name: Version 5.0
-      link: /guides/whats-new-in-v5/
     - name: Version 4.6
       link: /guides/whats-new-in-v4-6/
     - name: Version 4.5
@@ -263,17 +261,19 @@
     link: /enterprise/white-labeling/
   - name: License expiration
     link: /enterprise/license-expiration/
-  - name: Export dashboard as PDF
-    link: /enterprise/export-pdf/
 - name: Tutorials
   link: /tutorials/
   children:
   - name: Run Grafana behind a reverse proxy
     link: /installation/behind_proxy/
+  - name: 'API Tutorial: How To Create API Tokens And Dashboards For A Specific Organization'
+    link: /tutorials/api_org_token_howto/
   - name: Run Grafana with IIS Reverse Proxy on Windows
     link: /tutorials/iis/
   - name: Integrate Hubot and Grafana
     link: /tutorials/hubot_howto/
+  - name: Set up Grafana for High availability
+    link: /tutorials/ha_setup/
 - name: Plugins
   link: /plugins/
   children:
@@ -304,52 +304,50 @@
       name: Snapshot Mode
     - link: /plugins/developing/plugin.json/
       name: plugin.json Schema
-- name: HTTP APIs
+- name: HTTP API
   link: /http_api/
   children:
   - name: API Authentication
     link: /http_api/auth/
-  - name: Create API Tokens and Dashboards for a Specific Organization
-    link: /tutorials/api_org_token_howto/
-  - name: Admin API
+  - name: Admin
     link: /http_api/admin/
-  - name: Alerting API
+  - name: Alerting
     link: /http_api/alerting/
-  - name: Alerting Notifications API
+  - name: Alerting Notification Channels
     link: /http_api/alerting_notification_channels/
-  - name: Annotations API
+  - name: Annotations
     link: /http_api/annotations/
-  - name: Dashboard API
+  - name: Dashboard
     link: /http_api/dashboard/
-  - name: Dashboard Permissions API
+  - name: Dashboard Permissions
     link: /http_api/dashboard_permissions/
-  - name: Dashboard Versions API
+  - name: Dashboard Versions
     link: /http_api/dashboard_versions/
-  - name: Data Source API
+  - name: Data source
     link: /http_api/data_source/
-  - name: Data source Permissions API
+  - name: Datasource Permissions
     link: /http_api/datasource_permissions/
-  - name: External Group Sync API
+  - name: External Group Sync
     link: /http_api/external_group_sync/
-  - name: Folder API
+  - name: Folder
     link: /http_api/folder/
-  - name: Folder Permissions API
+  - name: Folder Permissions
     link: /http_api/folder_permissions/
-  - name: Folder/Dashboard Search API
+  - name: Folder/dashboard search
     link: /http_api/folder_dashboard_search/
-  - name: Organization API
+  - name: Organization
     link: /http_api/org/
-  - name: Other APIs
+  - name: Other
     link: /http_api/other/
-  - name: Playlist API
+  - name: Playlist
     link: /http_api/playlist/
-  - name: Preferences API
+  - name: Preferences
     link: /http_api/preferences/
-  - name: Snapshot API
+  - name: Snapshot
     link: /http_api/snapshot/
-  - name: Teams API
+  - name: Teams
     link: /http_api/team/
-  - name: Users API
+  - name: Users
     link: /http_api/user/
 - name: Developers
   link: /developers/

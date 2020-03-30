@@ -13,7 +13,6 @@ import (
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/services/alerting"
 	"github.com/grafana/grafana/pkg/tsdb"
-	"github.com/grafana/grafana/pkg/util/errutil"
 )
 
 func init() {
@@ -169,30 +168,12 @@ func (c *QueryCondition) executeQuery(context *alerting.EvalContext, timeRange *
 			return nil, fmt.Errorf("tsdb.HandleRequest() response error %v", v)
 		}
 
-		// If there are dataframes but no series on the result
-		useDataframes := v.Dataframes != nil && (v.Series == nil || len(v.Series) == 0)
-
-		if useDataframes { // convert the dataframes to tsdb.TimeSeries
-			frames, err := tsdb.FramesFromBytes(v.Dataframes)
-			if err != nil {
-				return nil, errutil.Wrap("tsdb.HandleRequest() failed to unmarshal arrow dataframes from bytes", err)
-			}
-
-			for _, frame := range frames {
-				ss, err := tsdb.FrameToSeriesSlice(frame)
-				if err != nil {
-					return nil, errutil.Wrapf(err, `tsdb.HandleRequest() failed to convert dataframe "%v" to tsdb.TimeSeriesSlice`, frame.Name)
-				}
-				result = append(result, ss...)
-			}
-		} else {
-			result = append(result, v.Series...)
-		}
+		result = append(result, v.Series...)
 
 		queryResultData := map[string]interface{}{}
 
 		if context.IsTestRun {
-			queryResultData["series"] = result
+			queryResultData["series"] = v.Series
 		}
 
 		if context.IsDebug && v.Meta != nil {
@@ -200,9 +181,6 @@ func (c *QueryCondition) executeQuery(context *alerting.EvalContext, timeRange *
 		}
 
 		if context.IsTestRun || context.IsDebug {
-			if useDataframes {
-				queryResultData["fromDataframe"] = true
-			}
 			context.Logs = append(context.Logs, &alerting.ResultLogEntry{
 				Message: fmt.Sprintf("Condition[%d]: Query Result", c.Index),
 				Data:    simplejson.NewFromAny(queryResultData),

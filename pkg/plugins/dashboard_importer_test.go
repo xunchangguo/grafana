@@ -92,11 +92,7 @@ func pluginScenario(desc string, t *testing.T, fn func()) {
 		_, err := sec.NewKey("path", "testdata/test-app")
 		So(err, ShouldBeNil)
 
-		pm := &PluginManager{
-			Cfg: &setting.Cfg{
-				FeatureToggles: map[string]bool{},
-			},
-		}
+		pm := &PluginManager{}
 		err = pm.Init()
 		So(err, ShouldBeNil)
 

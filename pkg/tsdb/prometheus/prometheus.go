@@ -140,7 +140,8 @@ func formatLegend(metric model.Metric, query *PrometheusQuery) string {
 		if val, exists := metric[model.LabelName(labelName)]; exists {
 			return []byte(val)
 		}
-		return []byte{}
+
+		return in
 	})
 
 	return string(result)

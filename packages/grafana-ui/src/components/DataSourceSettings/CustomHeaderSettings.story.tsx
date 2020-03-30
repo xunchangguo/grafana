@@ -4,7 +4,7 @@ import { CustomHeadersSettings } from './CustomHeadersSettings';
 import { DataSourceSettings } from '@grafana/data';
 
 export default {
-  title: 'Panel/DataSource/CustomHeadersSettings',
+  title: 'UI/DataSource/CustomHeadersSettings',
   component: CustomHeadersSettings,
   decorators: [withCenteredStory, withHorizontallyCenteredStory],
 };

@@ -3,8 +3,9 @@ import { cx, css } from 'emotion';
 import { stylesFactory, withTheme } from '../../themes';
 import { GrafanaTheme } from '@grafana/data';
 import { Themeable } from '../../types';
-import { ComponentSize } from '../../types/size';
-import { Button, ButtonVariant } from '../Button';
+import { Button } from '../Button/Button';
+import Forms from '../Forms';
+import { ButtonVariant, ButtonSize } from '../Button/types';
 
 const getStyles = stylesFactory((theme: GrafanaTheme) => {
   return {
@@ -54,7 +55,7 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
 
 interface Props extends Themeable {
   className?: string;
-  size?: ComponentSize;
+  size?: ButtonSize;
   confirmText?: string;
   disabled?: boolean;
   confirmVariant?: ButtonVariant;
@@ -133,9 +134,9 @@ class UnThemedConfirmButton extends PureComponent<Props, State> {
       <span className={styles.buttonContainer}>
         {typeof children === 'string' ? (
           <span className={buttonClass}>
-            <Button size={size} variant="link" onClick={onClick}>
+            <Forms.Button size={size} variant="link" onClick={onClick}>
               {children}
-            </Button>
+            </Forms.Button>
           </span>
         ) : (
           <span className={buttonClass} onClick={onClick}>
@@ -144,7 +145,7 @@ class UnThemedConfirmButton extends PureComponent<Props, State> {
         )}
         <span className={styles.confirmButtonContainer}>
           <span className={confirmButtonClass}>
-            <Button size={size} variant="secondary" onClick={this.onClickCancel}>
+            <Button size={size} variant="transparent" onClick={this.onClickCancel}>
               Cancel
             </Button>
             <Button size={size} variant={confirmButtonVariant} onClick={onConfirm}>

@@ -13,12 +13,10 @@ import { DashboardMigrator } from './DashboardMigrator';
 import { AppEvent, dateTime, DateTimeInput, isDateTime, PanelEvents, TimeRange, TimeZone, toUtc } from '@grafana/data';
 import { UrlQueryValue } from '@grafana/runtime';
 import { CoreEvents, DashboardMeta, KIOSK_MODE_TV } from 'app/types';
-import { VariableModel } from '../../templating/types';
+import { VariableModel } from '../../templating/variable';
 import { getConfig } from '../../../core/config';
-import { getVariableClones, getVariables } from 'app/features/variables/state/selectors';
-import { variableAdapters } from 'app/features/variables/adapters';
-import { onTimeRangeUpdated } from 'app/features/variables/state/actions';
-import { dispatch } from '../../../store/store';
+import { getVariables } from 'app/features/templating/state/selectors';
+import { variableAdapters } from 'app/features/templating/adapters';
 
 export interface CloneOptions {
   saveVariables?: boolean;
@@ -243,7 +241,7 @@ export class DashboardModel {
     defaults: { saveTimerange: boolean; saveVariables: boolean } & CloneOptions
   ) {
     const originalVariables = this.variables.list;
-    const currentVariables = getVariableClones();
+    const currentVariables = getVariables();
 
     copy.variables = {
       list: currentVariables.map(variable => variableAdapters.get(variable.type).getSaveModel(variable)),
@@ -278,9 +276,6 @@ export class DashboardModel {
 
   timeRangeUpdated(timeRange: TimeRange) {
     this.events.emit(CoreEvents.timeRangeUpdated, timeRange);
-    if (getConfig().featureToggles.newVariables) {
-      dispatch(onTimeRangeUpdated(timeRange));
-    }
   }
 
   startRefresh() {

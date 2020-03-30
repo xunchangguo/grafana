@@ -23,8 +23,6 @@ import {
   DataTransformerConfig,
   transformDataFrame,
   ScopedVars,
-  applyFieldOverrides,
-  DataConfigSource,
 } from '@grafana/data';
 
 export interface QueryRunnerOptions<
@@ -55,51 +53,36 @@ function getNextRequestId() {
 export class PanelQueryRunner {
   private subject?: ReplaySubject<PanelData>;
   private subscription?: Unsubscribable;
+  private transformations?: DataTransformerConfig[];
   private lastResult?: PanelData;
-  private dataConfigSource: DataConfigSource;
 
-  constructor(dataConfigSource: DataConfigSource) {
+  constructor() {
     this.subject = new ReplaySubject(1);
-    this.dataConfigSource = dataConfigSource;
   }
 
   /**
    * Returns an observable that subscribes to the shared multi-cast subject (that reply last result).
    */
   getData(transform = true): Observable<PanelData> {
-    return this.subject.pipe(
-      map((data: PanelData) => {
-        let processedData = data;
-        // apply transformations
-        if (transform && this.hasTransformations()) {
-          processedData = {
-            ...processedData,
-            series: transformDataFrame(this.dataConfigSource.getTransformations(), data.series),
-          };
-        }
-        // apply overrides
-        if (this.hasFieldOverrideOptions()) {
-          processedData = {
-            ...processedData,
-            series: applyFieldOverrides({
-              data: processedData.series,
-              ...this.dataConfigSource.getFieldOverrideOptions(),
-            }),
-          };
-        }
-        return processedData;
-      })
-    );
+    if (transform) {
+      return this.subject.pipe(
+        map((data: PanelData) => {
+          if (this.hasTransformations()) {
+            const newSeries = transformDataFrame(this.transformations, data.series);
+            return { ...data, series: newSeries };
+          }
+          return data;
+        })
+      );
+    }
+
+    // Just pass it directly
+    return this.subject.pipe();
   }
 
-  hasTransformations = () => {
-    const transformations = this.dataConfigSource.getTransformations();
-    return config.featureToggles.transformations && transformations && transformations.length > 0;
-  };
-
-  hasFieldOverrideOptions = () => {
-    return this.dataConfigSource.getFieldOverrideOptions();
-  };
+  hasTransformations() {
+    return config.featureToggles.transformations && this.transformations && this.transformations.length > 0;
+  }
 
   async run(options: QueryRunnerOptions) {
     const {
@@ -115,6 +98,7 @@ export class PanelQueryRunner {
       maxDataPoints,
       scopedVars,
       minInterval,
+      // delayStateNotification,
     } = options;
 
     if (isSharedDashboardQuery(datasource)) {
@@ -180,7 +164,6 @@ export class PanelQueryRunner {
     this.subscription = observable.subscribe({
       next: (data: PanelData) => {
         this.lastResult = preProcessPanelData(data, this.lastResult);
-        // Store preprocessed query results for applying overrides later on in the pipeline
         this.subject.next(this.lastResult);
       },
     });
@@ -191,11 +174,9 @@ export class PanelQueryRunner {
     this.lastResult = data;
   };
 
-  resendLastResult = () => {
-    if (this.lastResult) {
-      this.subject.next(this.lastResult);
-    }
-  };
+  setTransformations(transformations?: DataTransformerConfig[]) {
+    this.transformations = transformations;
+  }
 
   /**
    * Called when the panel is closed

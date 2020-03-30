@@ -56,7 +56,11 @@ func (e *CloudWatchExecutor) transformQueryResponseToQueryResult(cloudwatchRespo
 	responsesByRefID := make(map[string][]*cloudwatchResponse)
 
 	for _, res := range cloudwatchResponses {
-		responsesByRefID[res.RefId] = append(responsesByRefID[res.RefId], res)
+		if _, ok := responsesByRefID[res.RefId]; ok {
+			responsesByRefID[res.RefId] = append(responsesByRefID[res.RefId], res)
+		} else {
+			responsesByRefID[res.RefId] = []*cloudwatchResponse{res}
+		}
 	}
 
 	for refID, responses := range responsesByRefID {

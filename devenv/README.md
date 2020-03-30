@@ -36,7 +36,5 @@ make devenv sources=influxdb,prometheus2,elastic5
 Some of the blocks support dynamic change of the image version used in the Docker file. The signature looks like this: 
 
 ```bash
-make devenv sources=postgres,openldap,grafana postgres_version=9.2 grafana_version=6.7.0-beta1
+make devenv sources=postgres,openldap postgres_version=9.2
 ```
-
-Note: The grafana block is pre-configured with the dev-datasources and dashboards.

@@ -5,7 +5,7 @@ import { GrafanaTheme, dateTime, TIME_FORMAT } from '@grafana/data';
 import { stringToDateTimeType } from '../time';
 import { useTheme, stylesFactory } from '../../../themes';
 import { TimePickerTitle } from './TimePickerTitle';
-import { Button } from '../../Button';
+import Forms from '../../Forms';
 import { Portal } from '../../Portal/Portal';
 import { getThemeColors } from './colors';
 import { ClickOutsideWrapper } from '../../ClickOutsideWrapper/ClickOutsideWrapper';
@@ -281,12 +281,12 @@ const Footer = memo<Props>(({ onClose, onApply }) => {
 
   return (
     <div className={styles.container}>
-      <Button className={styles.apply} onClick={onApply}>
+      <Forms.Button className={styles.apply} onClick={onApply}>
         Apply time range
-      </Button>
-      <Button variant="secondary" onClick={onClose}>
+      </Forms.Button>
+      <Forms.Button variant="secondary" onClick={onClose}>
         Cancel
-      </Button>
+      </Forms.Button>
     </div>
   );
 });
