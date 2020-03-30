@@ -12,7 +12,6 @@ import { PanelChromeAngular } from './PanelChromeAngular';
 
 // Actions
 import { initDashboardPanel } from '../state/actions';
-import { updateLocation } from 'app/core/reducers/location';
 
 // Types
 import { PanelModel, DashboardModel } from '../state';
@@ -29,12 +28,11 @@ export interface OwnProps {
 }
 
 export interface ConnectedProps {
-  plugin?: PanelPlugin | null;
+  plugin?: PanelPlugin;
 }
 
 export interface DispatchProps {
   initDashboardPanel: typeof initDashboardPanel;
-  updateLocation: typeof updateLocation;
 }
 
 export type Props = OwnProps & ConnectedProps & DispatchProps;
@@ -74,7 +72,7 @@ export class DashboardPanelUnconnected extends PureComponent<Props, State> {
   };
 
   renderPanel(plugin: PanelPlugin) {
-    const { dashboard, panel, isFullscreen, isEditing, isInView, isInEditMode, updateLocation } = this.props;
+    const { dashboard, panel, isFullscreen, isEditing, isInView, isInEditMode } = this.props;
 
     const autoSizerStyle = { height: isEditing ? '100%' : '' };
 
@@ -109,7 +107,6 @@ export class DashboardPanelUnconnected extends PureComponent<Props, State> {
               isInEditMode={isInEditMode}
               width={width}
               height={height}
-              updateLocation={updateLocation}
             />
           );
         }}
@@ -175,6 +172,6 @@ const mapStateToProps: MapStateToProps<ConnectedProps, OwnProps, StoreState> = (
   };
 };
 
-const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = { initDashboardPanel, updateLocation };
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = { initDashboardPanel };
 
 export const DashboardPanel = connect(mapStateToProps, mapDispatchToProps)(DashboardPanelUnconnected);
