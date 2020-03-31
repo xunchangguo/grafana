@@ -43,10 +43,10 @@ echo $'\nPublishing packages'
 yarn packages:${SCRIPT}
 
 # When releasing stable(latest) version of packages we are updating previously published next tag(beta) to be the same version as latest
-if [ $RELEASE_CHANNEL == "latest" ]; then
-  for i in "${PACKAGES[@]}"
-  do
-    :
-    npm dist-tag add "$i"@"$PACKAGE_VERSION" next
-  done
-fi
+#if [ $RELEASE_CHANNEL == "latest" ]; then
+#  for i in "${PACKAGES[@]}"
+#  do
+#    :
+#    npm dist-tag add "$i"@"$PACKAGE_VERSION" next
+#  done
+#fi

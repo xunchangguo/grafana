@@ -1052,9 +1052,10 @@ jobs:
           command: './scripts/ci-job-started.sh'
       - attach_workspace:
           at: .
-      - run: docker info
+      - run: docker info      
       - run: docker run --privileged linuxkit/binfmt:v0.6
       - run: cp dist/grafana-latest.linux-*.tar.gz packaging/docker
+      - run: cd packaging/docker && ./build-deploy.sh "${CIRCLE_TAG}"      
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'
@@ -1077,6 +1078,7 @@ jobs:
       - run: docker info
       - run: docker run --privileged linuxkit/binfmt:v0.6
       - run: cp dist/grafana-latest.linux-*.tar.gz packaging/docker
+      - run: cd packaging/docker && ./build-deploy.sh --ubuntu "${CIRCLE_TAG}"
       - run:
           name: ci job failed
           command: './scripts/ci-job-failed.sh'

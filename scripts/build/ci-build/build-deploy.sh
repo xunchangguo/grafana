@@ -8,4 +8,4 @@ _dpath=$(dirname "${BASH_SOURCE[0]}")
 cd "$_dpath"
 
 docker build -t $_tag .
-#docker push $_tag
+docker push $_tag
